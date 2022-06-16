@@ -1,6 +1,6 @@
 # whm
 
-A new Flutter project.
+Simple warehous management.
 
 ## Getting Started
 
