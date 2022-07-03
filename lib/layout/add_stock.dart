@@ -84,7 +84,7 @@ class _AddStockState extends State<AddStock> {
                       width: double.maxFinite,
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -100,7 +100,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -116,7 +116,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -132,7 +132,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -149,7 +149,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -166,7 +166,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -232,7 +232,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -249,7 +249,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -266,7 +266,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -278,7 +278,8 @@ class _AddStockState extends State<AddStock> {
                           hintText: "",
                         ),
                         inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,6}')),
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d+\.?\d{0,6}')),
                         ],
                       ),
                     ),
@@ -286,7 +287,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -303,7 +304,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -320,7 +321,7 @@ class _AddStockState extends State<AddStock> {
                       height: 30,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
-                        color: Colors.grey[100],
+                        color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
@@ -362,7 +363,7 @@ class _AddStockState extends State<AddStock> {
                   height: 50,
                   width: double.maxFinite,
                   decoration: BoxDecoration(
-                    color: Colors.grey[100],
+                    color: Colors.blueGrey[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
@@ -419,7 +420,8 @@ class _AddStockState extends State<AddStock> {
       return false;
     }
     context.read<StockProvider>().setDB(
-      query: '''insert into stock (name,type,provider,container,batch,quantity,remain,recieved_date,expiration_date,made_date,stocking_zone,return,broken,comment) 
+      query:
+          '''insert into stock (name,type,provider,container,batch,quantity,remain,recieved_date,expiration_date,made_date,stocking_zone,return,broken,comment) 
       values(
         "${_nameController.text}","${_typeController.text}",
         "${_providerController.text}","${_containerController.text}",
@@ -435,7 +437,8 @@ class _AddStockState extends State<AddStock> {
     );
     DateTime now = DateTime.now();
     context.read<HistoryProvider>().setDB(
-      query: '''insert into history (name,type,provider,operation,date,time,stock,remain) 
+      query:
+          '''insert into history (name,type,provider,operation,date,time,stock,remain) 
       values(
         '${_nameController.text}','${_typeController.text}',
         '${_providerController.text}','${_quantityController.text}',

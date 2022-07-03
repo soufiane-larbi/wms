@@ -43,11 +43,14 @@ class _StockToolBarState extends State<StockToolBar> {
                               width: 50,
                               height: 30,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      context.read<StockProvider>().setDB(query: '''delete from stock 
+                                      context
+                                          .read<StockProvider>()
+                                          .setDB(query: '''delete from stock 
                                       where id=${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}''');
                                       Navigator.of(context).pop();
                                     },
@@ -111,9 +114,10 @@ class _StockToolBarState extends State<StockToolBar> {
                           return AlertDialog(
                             content: SizedBox(
                               width: 180,
-                              height: 123,
+                              height: 143,
                               child: RemoveStock(
-                                stock: context.watch<StockProvider>().stockList[context.watch<StockProvider>().selected],
+                                stock: context.watch<StockProvider>().stockList[
+                                    context.watch<StockProvider>().selected],
                               ),
                             ),
                           );
@@ -166,7 +170,8 @@ class _StockToolBarState extends State<StockToolBar> {
             ),
             onChanged: (_) {
               context.read<StockProvider>().setStockList(
-                    query: "select * from stock where name like '%${_editingController.text}%'",
+                    query:
+                        "select * from stock where name like '%${_editingController.text}%'",
                   );
             },
           ),
@@ -174,7 +179,9 @@ class _StockToolBarState extends State<StockToolBar> {
         InkWell(
           onTap: () async {},
           child: Icon(
-            _editingController.text == '' ? Icons.search : Icons.cancel_outlined,
+            _editingController.text == ''
+                ? Icons.search
+                : Icons.cancel_outlined,
             size: 35,
           ),
         ),

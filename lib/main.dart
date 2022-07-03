@@ -43,6 +43,7 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[100],
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [

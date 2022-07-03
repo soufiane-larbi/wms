@@ -25,14 +25,17 @@ class RemoveStock extends StatelessWidget {
         const SizedBox(
           height: 5,
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Quantity Disponible: ${stock['remain']}'),
-          ],
+        Text('Quantity Disponible: ${stock['remain']}'),
+        const SizedBox(
+          height: 5,
         ),
-        SizedBox(
-          height: 40,
+        Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: Colors.blueGrey[100],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          height: 50,
           child: TextField(
             controller: _editingController,
             textAlign: TextAlign.center,
@@ -50,10 +53,13 @@ class RemoveStock extends StatelessWidget {
         ),
         TextButton(
           onPressed: () {
-            double remain = _editingController.text != '' ? stock['remain'] - double.parse(_editingController.text) : -1;
+            double remain = _editingController.text != ''
+                ? stock['remain'] - double.parse(_editingController.text)
+                : -1;
             if (remain >= 0.0) {
               context.read<StockProvider>().setDB(
-                    query: "update stock set remain=$remain WHERE id=${stock['id']}",
+                    query:
+                        "update stock set remain=$remain WHERE id=${stock['id']}",
                   );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -66,7 +72,8 @@ class RemoveStock extends StatelessWidget {
               );
               DateTime now = DateTime.now();
               context.read<HistoryProvider>().setDB(
-                query: '''insert into history (name,type,provider,operation,date,time,stock,remain) 
+                query:
+                    '''insert into history (name,type,provider,operation,date,time,stock,remain) 
       values(
         '${stock['name']}','${stock['type']}',
         '${stock['provider']}','-${_editingController.text}',
