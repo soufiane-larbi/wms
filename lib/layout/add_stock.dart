@@ -13,18 +13,12 @@ class AddStock extends StatefulWidget {
 
 class _AddStockState extends State<AddStock> {
   final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _typeController = TextEditingController();
-  final TextEditingController _providerController = TextEditingController();
-  final TextEditingController _containerController = TextEditingController();
-  final TextEditingController _recieveController = TextEditingController();
-  final TextEditingController _madeController = TextEditingController();
-  final TextEditingController _expController = TextEditingController();
+  final TextEditingController _modelController = TextEditingController();
+  final TextEditingController _categoryController = TextEditingController();
+  final TextEditingController _skuController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  final TextEditingController _batchController = TextEditingController();
-  final TextEditingController _stockingController = TextEditingController();
-  final TextEditingController _returnController = TextEditingController();
-  final TextEditingController _brokenController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
+  final TextEditingController _zoneController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +29,7 @@ class _AddStockState extends State<AddStock> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                flex: 4,
+                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -43,44 +37,29 @@ class _AddStockState extends State<AddStock> {
                     Container(
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: const Text("Produit"),
+                      child: const Text("Nom"),
                     ),
                     Container(
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: const Text("Fournisseur"),
+                      child: const Text("Categorie"),
                     ),
                     Container(
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: const Text("Batch"),
-                    ),
-                    Container(
-                      height: 30,
-                      alignment: Alignment.centerLeft,
-                      child: const Text("Recevoir"),
-                    ),
-                    Container(
-                      height: 30,
-                      alignment: Alignment.centerLeft,
-                      child: const Text("Fabrication"),
-                    ),
-                    Container(
-                      height: 30,
-                      alignment: Alignment.centerLeft,
-                      child: const Text("Retour"),
+                      child: const Text("Model"),
                     ),
                   ],
                 ),
               ),
               Expanded(
-                flex: 6,
+                flex: 7,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      height: 30,
+                      height: 40,
                       width: double.maxFinite,
                       alignment: Alignment.centerLeft,
                       decoration: BoxDecoration(
@@ -97,14 +76,14 @@ class _AddStockState extends State<AddStock> {
                           )),
                     ),
                     Container(
-                      height: 30,
+                      height: 40,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
-                          controller: _providerController,
+                          controller: _categoryController,
                           textAlignVertical: TextAlignVertical.center,
                           textAlign: TextAlign.center,
                           decoration: const InputDecoration(
@@ -113,78 +92,27 @@ class _AddStockState extends State<AddStock> {
                           )),
                     ),
                     Container(
-                      height: 30,
+                      height: 40,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
-                          controller: _batchController,
+                          controller: _modelController,
                           textAlignVertical: TextAlignVertical.center,
                           textAlign: TextAlign.center,
                           decoration: const InputDecoration(
                             border: InputBorder.none,
                             hintText: "",
                           )),
-                    ),
-                    Container(
-                      height: 30,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _recieveController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "jj/mm/aaaa",
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 30,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _madeController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "",
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 30,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _returnController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "",
-                        ),
-                      ),
                     ),
                   ],
                 ),
               ),
               const VerticalDivider(),
               Expanded(
-                flex: 4,
+                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -192,51 +120,36 @@ class _AddStockState extends State<AddStock> {
                     Container(
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: const Text("Type"),
+                      child: const Text("SKU"),
                     ),
                     Container(
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: const Text("Conteneur"),
+                      child: const Text("Quantitie"),
                     ),
                     Container(
                       height: 30,
                       alignment: Alignment.centerLeft,
-                      child: const Text("Quantité"),
-                    ),
-                    Container(
-                      height: 30,
-                      alignment: Alignment.centerLeft,
-                      child: const Text("Expiration"),
-                    ),
-                    Container(
-                      height: 30,
-                      alignment: Alignment.centerLeft,
-                      child: const Text("Stockage"),
-                    ),
-                    Container(
-                      height: 30,
-                      alignment: Alignment.centerLeft,
-                      child: const Text("Casse"),
+                      child: const Text("Location"),
                     ),
                   ],
                 ),
               ),
               Expanded(
-                flex: 6,
+                flex: 7,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Container(
-                      height: 30,
+                      height: 40,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
-                        controller: _typeController,
+                        controller: _skuController,
                         textAlignVertical: TextAlignVertical.center,
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
@@ -246,24 +159,7 @@ class _AddStockState extends State<AddStock> {
                       ),
                     ),
                     Container(
-                      height: 30,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _containerController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "",
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 30,
+                      height: 40,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
@@ -284,48 +180,14 @@ class _AddStockState extends State<AddStock> {
                       ),
                     ),
                     Container(
-                      height: 30,
+                      height: 40,
                       width: double.maxFinite,
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: TextField(
-                        controller: _expController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "",
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 30,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _stockingController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "",
-                        ),
-                      ),
-                    ),
-                    Container(
-                      height: 30,
-                      width: double.maxFinite,
-                      decoration: BoxDecoration(
-                        color: Colors.blueGrey[100],
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: TextField(
-                        controller: _brokenController,
+                        controller: _zoneController,
                         textAlignVertical: TextAlignVertical.center,
                         textAlign: TextAlign.center,
                         decoration: const InputDecoration(
@@ -350,7 +212,7 @@ class _AddStockState extends State<AddStock> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                flex: 4,
+                flex: 3,
                 child: Container(
                   height: 30,
                   alignment: Alignment.topLeft,
@@ -358,19 +220,16 @@ class _AddStockState extends State<AddStock> {
                 ),
               ),
               Expanded(
-                flex: 16,
+                flex: 17,
                 child: Container(
-                  height: 50,
-                  width: double.maxFinite,
                   decoration: BoxDecoration(
                     color: Colors.blueGrey[100],
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
-                    controller: _commentController,
-                    maxLines: 100,
+                    controller: _skuController,
                     textAlignVertical: TextAlignVertical.center,
-                    textAlign: TextAlign.left,
+                    textAlign: TextAlign.center,
                     decoration: const InputDecoration(
                       border: InputBorder.none,
                       hintText: "",
@@ -381,6 +240,7 @@ class _AddStockState extends State<AddStock> {
             ],
           ),
         ),
+        const SizedBox(height: 10),
         SizedBox(
           height: 30,
           child: TextButton(
@@ -395,18 +255,17 @@ class _AddStockState extends State<AddStock> {
                     backgroundColor: Colors.green,
                   ),
                 );
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      "Le nom du produit et la quantité sont requis",
-                      textAlign: TextAlign.center,
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
+                Navigator.of(context).pop();
               }
-              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    "Le nom du produit et la quantité sont requis",
+                    textAlign: TextAlign.center,
+                  ),
+                  backgroundColor: Colors.red,
+                ),
+              );
             },
             child: const Text('Ajouter'),
           ),
@@ -416,37 +275,22 @@ class _AddStockState extends State<AddStock> {
   }
 
   bool add() {
-    if (_nameController.text == '' || _quantityController.text == '') {
-      return false;
-    }
-    context.read<StockProvider>().setDB(
-      query:
-          '''insert into stock (name,type,provider,container,batch,quantity,remain,recieved_date,expiration_date,made_date,stocking_zone,return,broken,comment) 
-      values(
-        "${_nameController.text}","${_typeController.text}",
-        "${_providerController.text}","${_containerController.text}",
-        "${_batchController.text}",
-        ${double.parse(_quantityController.text)},
-        ${double.parse(_quantityController.text)},
-        "${_recieveController.text}","${_expController.text}",
-        "${_madeController.text}","${_stockingController.text}",
-        ${double.parse(_returnController.text == '' ? '0' : _returnController.text)},
-        ${double.parse(_brokenController.text == '' ? '0' : _returnController.text)},
-        "${_commentController.text}"
-      )''',
-    );
-    DateTime now = DateTime.now();
-    context.read<HistoryProvider>().setDB(
-      query:
-          '''insert into history (name,type,provider,operation,date,time,stock,remain) 
-      values(
-        '${_nameController.text}','${_typeController.text}',
-        '${_providerController.text}','${_quantityController.text}',
-        '${now.day}/${now.month}/${now.year}','${now.hour}:${now.minute}',
-        ${double.parse(_quantityController.text)},
-        ${double.parse(_quantityController.text)}
-      )''',
-    );
+    context
+        .read<StockProvider>()
+        .query(query: '''INSERT INTO products(name,category,model,
+        sku,quantity,remain,zone, creation_date,modified_date)
+          VALUES(
+            '${_nameController.text}',
+            '${_categoryController.text}',
+            '${_modelController.text}',
+            '${_skuController.text}',
+            ${_quantityController.text},
+            ${_quantityController.text},
+            ${_zoneController.text},
+            NOW(),
+            NOW()
+          );
+        ''');
     return true;
   }
 }

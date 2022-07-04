@@ -25,7 +25,9 @@ class _StockState extends State<Stock> {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15),
-                color: context.watch<StockProvider>().selected == index ? Colors.blue : Colors.white,
+                color: context.watch<StockProvider>().selected == index
+                    ? Colors.blue
+                    : Colors.white,
               ),
               child: stockItem(
                 context.watch<StockProvider>().stockList[index],
@@ -46,41 +48,50 @@ class _StockState extends State<Stock> {
             flex: 13,
             child: Text(
               item['name'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              style: TextStyle(
+                  color: context.watch<StockProvider>().selected == index
+                      ? Colors.white
+                      : Colors.black),
             ),
           ),
           Expanded(
             flex: 13,
             child: Text(
-              item['type'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              item['model'].toString(),
+              style: TextStyle(
+                  color: context.watch<StockProvider>().selected == index
+                      ? Colors.white
+                      : Colors.black),
             ),
           ),
           Expanded(
             flex: 13,
             child: Text(
-              item['provider'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              item['category'].toString(),
+              style: TextStyle(
+                  color: context.watch<StockProvider>().selected == index
+                      ? Colors.white
+                      : Colors.black),
             ),
           ),
           Expanded(
             flex: 7,
             child: Text(
-              item['container'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
-            ),
-          ),
-          Expanded(
-            flex: 7,
-            child: Text(
-              item['batch'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              item['sku'].toString(),
+              style: TextStyle(
+                  color: context.watch<StockProvider>().selected == index
+                      ? Colors.white
+                      : Colors.black),
             ),
           ),
           Expanded(
             flex: 7,
             child: Text(
               item['quantity'].toString(),
+              style: TextStyle(
+                  color: context.watch<StockProvider>().selected == index
+                      ? Colors.white
+                      : Colors.black),
             ),
           ),
           Expanded(
@@ -98,56 +109,19 @@ class _StockState extends State<Stock> {
           Expanded(
             flex: 7,
             child: Text(
-              item['return'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              item['zone'].toString(),
             ),
           ),
           Expanded(
-            flex: 7,
+            flex: 9,
             child: Text(
-              item['broken'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              item['creation_date'].toString(),
             ),
           ),
           Expanded(
-            flex: 7,
+            flex: 9,
             child: Text(
-              item['recieved_date'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
-            ),
-          ),
-          Expanded(
-            flex: 7,
-            child: Text(
-              item['made_date'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
-            ),
-          ),
-          Expanded(
-            flex: 7,
-            child: Text(
-              item['expiration_date'].toString(),
-              style: TextStyle(
-                color: expireSoon(item)
-                    ? Colors.amber
-                    : context.watch<StockProvider>().selected == index
-                        ? Colors.white
-                        : Colors.black,
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Text(
-              item['stocking_zone'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
-            ),
-          ),
-          Expanded(
-            flex: 7,
-            child: Text(
-              item['comment'].toString(),
-              style: TextStyle(color: context.watch<StockProvider>().selected == index ? Colors.white : Colors.black),
+              item['modified_date'].toString(),
             ),
           ),
         ],

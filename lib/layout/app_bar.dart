@@ -50,7 +50,7 @@ class _StockToolBarState extends State<StockToolBar> {
                                     onPressed: () {
                                       context
                                           .read<StockProvider>()
-                                          .setDB(query: '''delete from stock 
+                                          .query(query: '''delete from stock 
                                       where id=${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}''');
                                       Navigator.of(context).pop();
                                     },
@@ -92,8 +92,8 @@ class _StockToolBarState extends State<StockToolBar> {
                         builder: (_) {
                           return const AlertDialog(
                             content: SizedBox(
-                              width: 500,
-                              height: 400,
+                              width: 700,
+                              height: 320,
                               child: AddStock(),
                             ),
                           );

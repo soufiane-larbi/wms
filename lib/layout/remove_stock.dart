@@ -57,7 +57,7 @@ class RemoveStock extends StatelessWidget {
                 ? stock['remain'] - double.parse(_editingController.text)
                 : -1;
             if (remain >= 0.0) {
-              context.read<StockProvider>().setDB(
+              context.read<StockProvider>().query(
                     query:
                         "update stock set remain=$remain WHERE id=${stock['id']}",
                   );

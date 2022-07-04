@@ -34,6 +34,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   pdf: ^3.6.5
   printing: ^5.6.6
+  mysql1: ^0.20.0
 
 dev_dependencies:
   flutter_test:

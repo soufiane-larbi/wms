@@ -4,8 +4,78 @@ import 'package:whm/helper/provider/history_provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
 import 'package:whm/layout/app_bar.dart';
 import 'layout/stock.dart';
+import 'package:mysql1/mysql1.dart';
 
-void main() {
+void main() async {
+  var settings = ConnectionSettings(
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+  );
+  var conn = await MySqlConnection.connect(settings);
+  await conn.query("CREATE DATABASE IF NOT EXISTS STOCK");
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `stock`.`zone` (
+      `id` INT NOT NULL AUTO_INCREMENT ,
+      `name` VARCHAR(50) NOT NULL ,
+      `address` VARCHAR(250) NOT NULL ,
+      `creation_date` TIMESTAMP NOT NULL ,
+      `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+      PRIMARY KEY (`id`)) ENGINE = MyISAM;
+    ''',
+  );
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `stock`.`category` (
+      `id` INT NOT NULL AUTO_INCREMENT ,
+      `name` VARCHAR(100) NOT NULL ,
+      `creation_date` TIMESTAMP NOT NULL ,
+      `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+      PRIMARY KEY (`id`)) ENGINE = MyISAM;
+    ''',
+  );
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `stock`.`products` ( 
+      `id` INT NOT NULL AUTO_INCREMENT ,
+      `name` VARCHAR(50) NOT NULL ,
+      `model` VARCHAR(30) NOT NULL ,
+      `category` INT NOT NULL ,
+      `sku` VARCHAR(30) NULL ,
+      `quantity` INT NOT NULL ,
+      `remain` INT NOT NULL ,
+      `zone` INT NOT NULL ,
+      `creation_date` TIMESTAMP NOT NULL ,
+      `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+      PRIMARY KEY (`id`),
+      FOREIGN KEY (`zone`) REFERENCES `stock`.`zone`(`id`),
+      FOREIGN KEY (`category`) REFERENCES `stock`.`category`(`id`)) ENGINE = MyISAM;
+    ''',
+  );
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `stock`.`users` ( 
+      `id` INT NOT NULL AUTO_INCREMENT , 
+      `user` VARCHAR(50) NOT NULL ,
+      `password` VARCHAR(20) NOT NULL ,
+      `name` VARCHAR(35) NOT NULL ,
+      `prename` VARCHAR(35) NOT NULL , 
+      `creation_date` TIMESTAMP NOT NULL ,
+      `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+      PRIMARY KEY (`id`)) ENGINE = MyISAM;
+    ''',
+  );
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `stock`.`history` ( 
+      `id` INT NOT NULL AUTO_INCREMENT , 
+      `user` INT NULL , 
+      `product` INT NOT NULL , 
+      `operation` INT NOT NULL , 
+      `previous_quantity` INT NOT NULL , 
+      `new_quantity` INT NOT NULL , 
+      `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+      PRIMARY KEY (`id`),
+      FOREIGN KEY (`product`) REFERENCES `stock`.`products`(`id`)) ENGINE = MyISAM;
+    ''',
+  );
+  conn.close();
   runApp(
     MultiProvider(
       providers: [
@@ -20,7 +90,7 @@ void main() {
 }
 
 class Home extends StatefulWidget {
-  Home({Key? key}) : super(key: key);
+  const Home({Key? key}) : super(key: key);
 
   @override
   State<Home> createState() => _HomeState();
@@ -91,7 +161,7 @@ class _HomeState extends State<Home> {
                 ),
                 color: Colors.white,
               ),
-              child: Stock(),
+              child: const Stock(),
             ),
           ),
         ],
@@ -108,23 +178,19 @@ class _HomeState extends State<Home> {
         ),
         Expanded(
           flex: 13,
-          child: Text('Type'),
+          child: Text('Model'),
         ),
         Expanded(
           flex: 13,
-          child: Text('Fournisseur'),
+          child: Text('Categorie'),
         ),
         Expanded(
           flex: 7,
-          child: Text('Contenaire'),
+          child: Text('SKU'),
         ),
         Expanded(
           flex: 7,
-          child: Text('Batch'),
-        ),
-        Expanded(
-          flex: 7,
-          child: Text('Quantiy'),
+          child: Text('Quantity'),
         ),
         Expanded(
           flex: 7,
@@ -132,31 +198,15 @@ class _HomeState extends State<Home> {
         ),
         Expanded(
           flex: 7,
-          child: Text('Retour'),
+          child: Text('Location'),
         ),
         Expanded(
-          flex: 7,
-          child: Text('Casse'),
+          flex: 9,
+          child: Text('Date De Creation'),
         ),
         Expanded(
-          flex: 7,
-          child: Text('Date Rec'),
-        ),
-        Expanded(
-          flex: 7,
-          child: Text('Fabrication'),
-        ),
-        Expanded(
-          flex: 7,
-          child: Text('date d\'Exp'),
-        ),
-        Expanded(
-          flex: 5,
-          child: Text('Zone'),
-        ),
-        Expanded(
-          flex: 7,
-          child: Text('Commentaire'),
+          flex: 9,
+          child: Text('Dernier Modification'),
         ),
       ],
     );

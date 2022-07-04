@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:mysql1/mysql1.dart';
 
 class StockProvider with ChangeNotifier {
   final _stockList = [];
@@ -7,6 +7,12 @@ class StockProvider with ChangeNotifier {
 
   int get selected => _selected;
   get stockList => _stockList;
+  var settings = ConnectionSettings(
+    host: 'localhost',
+    port: 3306,
+    user: 'root',
+    db: 'stock',
+  );
 
   void changeSelected(index) {
     _selected = index;
@@ -15,20 +21,18 @@ class StockProvider with ChangeNotifier {
 
   Future<void> setStockList({query = ''}) async {
     _stockList.clear();
-    sqfliteFfiInit();
-    var databaseFactory = databaseFactoryFfi;
-    var db = await databaseFactory.openDatabase("database.sqlite3");
-    query == '' ? _stockList.addAll(await db.rawQuery("select * from stock where quantity > 0 order by type asc")) : _stockList.addAll(await db.rawQuery(query));
+    var conn = await MySqlConnection.connect(settings);
+    _stockList.addAll(await conn
+        .query("select * from products where remain > 0 order by id desc"));
     notifyListeners();
+    conn.close();
   }
 
-  Future<void> setDB({query = ''}) async {
+  Future<void> query({query = ''}) async {
     _stockList.clear();
-    sqfliteFfiInit();
-    var databaseFactory = databaseFactoryFfi;
-    var db = await databaseFactory.openDatabase("database.sqlite3");
-    await db.execute(query);
-    _stockList.addAll(await db.rawQuery("select * from stock where quantity > 0 order by type asc"));
+    var conn = await MySqlConnection.connect(settings);
+    _stockList.addAll(await conn.query(query));
     notifyListeners();
+    conn.close();
   }
 }
