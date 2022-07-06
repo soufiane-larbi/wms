@@ -255,6 +255,7 @@ class _AddStockState extends State<AddStock> {
                     backgroundColor: Colors.green,
                   ),
                 );
+                context.read<StockProvider>().setStockList();
                 Navigator.of(context).pop();
               }
               ScaffoldMessenger.of(context).showSnackBar(

@@ -59,7 +59,7 @@ class RemoveStock extends StatelessWidget {
             if (remain >= 0.0) {
               context.read<StockProvider>().query(
                     query:
-                        "update stock set remain=$remain WHERE id=${stock['id']}",
+                        "update products set remain=$remain WHERE id=${stock['id']}",
                   );
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
@@ -92,6 +92,7 @@ class RemoveStock extends StatelessWidget {
                 ),
               );
             }
+            context.read<StockProvider>().setStockList();
             Navigator.of(context).pop();
           },
           child: const Text('Valider'),

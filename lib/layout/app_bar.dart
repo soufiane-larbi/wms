@@ -50,8 +50,11 @@ class _StockToolBarState extends State<StockToolBar> {
                                     onPressed: () {
                                       context
                                           .read<StockProvider>()
-                                          .query(query: '''delete from stock 
+                                          .query(query: '''delete from products 
                                       where id=${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}''');
+                                      context
+                                          .read<StockProvider>()
+                                          .setStockList();
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text(
