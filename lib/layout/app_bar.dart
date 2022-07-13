@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:whm/helper/provider/history_provider.dart';
 import 'package:whm/layout/history.dart';
 import 'package:whm/layout/remove_stock.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +18,6 @@ class _StockToolBarState extends State<StockToolBar> {
   @override
   Widget build(BuildContext context) {
     return Visibility(
-      visible: context.watch<HistoryProvider>().historyList.length < 100,
       child: SizedBox(
         height: double.maxFinite,
         width: double.maxFinite,
@@ -48,13 +46,12 @@ class _StockToolBarState extends State<StockToolBar> {
                                 children: [
                                   TextButton(
                                     onPressed: () {
-                                      context
-                                          .read<StockProvider>()
-                                          .query(query: '''delete from products 
-                                      where id=${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}''');
-                                      context
-                                          .read<StockProvider>()
-                                          .setStockList();
+                                      context.read<StockProvider>().query(
+                                        query: '''delete from products 
+                                      where id=${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}''',
+                                        filter:
+                                            "where remain > 0 order by id desc",
+                                      );
                                       Navigator.of(context).pop();
                                     },
                                     child: const Text(
@@ -135,7 +132,6 @@ class _StockToolBarState extends State<StockToolBar> {
                   ),
                   InkWell(
                     onTap: () {
-                      context.read<HistoryProvider>().setHistoryList();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (_) {
@@ -173,9 +169,13 @@ class _StockToolBarState extends State<StockToolBar> {
             ),
             onChanged: (_) {
               context.read<StockProvider>().setStockList(
-                    query:
-                        "select * from stock where name like '%${_editingController.text}%'",
-                  );
+                filter: '''
+                    where products.name like '%${_editingController.text}%'
+                    or products.model like '%${_editingController.text}%'
+                    or category.name like '%${_editingController.text}%' 
+                    or zone.name like '%${_editingController.text}%' 
+                  ''',
+              );
             },
           ),
         ),

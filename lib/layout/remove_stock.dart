@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:whm/helper/provider/history_provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
 
 class RemoveStock extends StatelessWidget {
@@ -58,9 +57,9 @@ class RemoveStock extends StatelessWidget {
                 : -1;
             if (remain >= 0.0) {
               context.read<StockProvider>().query(
-                    query:
-                        "update products set remain=$remain WHERE id=${stock['id']}",
-                  );
+                  query:
+                      "update products set remain=$remain WHERE id=${stock['id']}",
+                  filter: "where remain > 0 order by id desc");
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
@@ -70,17 +69,17 @@ class RemoveStock extends StatelessWidget {
                   backgroundColor: Colors.green,
                 ),
               );
-              DateTime now = DateTime.now();
-              context.read<HistoryProvider>().setDB(
-                query:
-                    '''insert into history (name,type,provider,operation,date,time,stock,remain) 
-      values(
-        '${stock['name']}','${stock['type']}',
-        '${stock['provider']}','-${_editingController.text}',
-        '${now.day}/${now.month}/${now.year}','${now.hour}:${now.minute}',
-        ${stock['quantity']},$remain
-      )''',
-              );
+              //         DateTime now = DateTime.now();
+              //         context.read<HistoryProvider>().setDB(
+              //           query:
+              //               '''insert into history (name,type,provider,operation,date,time,stock,remain)
+              // values(
+              //   '${stock['name']}','${stock['type']}',
+              //   '${stock['provider']}','-${_editingController.text}',
+              //   '${now.day}/${now.month}/${now.year}','${now.hour}:${now.minute}',
+              //   ${stock['quantity']},$remain
+              // )''',
+              // );
             } else {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -92,7 +91,6 @@ class RemoveStock extends StatelessWidget {
                 ),
               );
             }
-            context.read<StockProvider>().setStockList();
             Navigator.of(context).pop();
           },
           child: const Text('Valider'),

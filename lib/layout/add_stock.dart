@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:whm/helper/provider/history_provider.dart';
+import 'package:whm/helper/provider/category_provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
+import 'package:whm/helper/provider/zone_provider.dart';
 
 class AddStock extends StatefulWidget {
   const AddStock({Key? key}) : super(key: key);
@@ -14,11 +15,37 @@ class AddStock extends StatefulWidget {
 class _AddStockState extends State<AddStock> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _modelController = TextEditingController();
-  final TextEditingController _categoryController = TextEditingController();
   final TextEditingController _skuController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
   final TextEditingController _commentController = TextEditingController();
-  final TextEditingController _zoneController = TextEditingController();
+  int? _category, _zone;
+  List<DropdownMenuItem<int>>? _dropdownCategory, _dropdownZone;
+
+  @override
+  void initState() {
+    super.initState();
+    _dropdownCategory = context
+        .read<CategoryProvider>()
+        .categoryList
+        .map<DropdownMenuItem<int>>((e) {
+      return DropdownMenuItem<int>(
+        value: e['id'],
+        child: Text(e['name']),
+      );
+    }).toList();
+    _category = _dropdownCategory![0].value;
+
+    _dropdownZone = context
+        .read<ZoneProvider>()
+        .categoryList
+        .map<DropdownMenuItem<int>>((e) {
+      return DropdownMenuItem<int>(
+        value: e['id'],
+        child: Text(e['name']),
+      );
+    }).toList();
+    _zone = _dropdownZone![0].value;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,18 +105,26 @@ class _AddStockState extends State<AddStock> {
                     Container(
                       height: 40,
                       width: double.maxFinite,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: TextField(
-                          controller: _categoryController,
-                          textAlignVertical: TextAlignVertical.center,
-                          textAlign: TextAlign.center,
-                          decoration: const InputDecoration(
-                            border: InputBorder.none,
-                            hintText: "",
-                          )),
+                      child: DropdownButton<int>(
+                        isExpanded: true,
+                        value: _category,
+                        onChanged: (var value) {
+                          setState(() {
+                            _category = value;
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_downward),
+                        elevation: 0,
+                        underline: Container(
+                          height: 0,
+                        ),
+                        items: _dropdownCategory,
+                      ),
                     ),
                     Container(
                       height: 40,
@@ -182,18 +217,25 @@ class _AddStockState extends State<AddStock> {
                     Container(
                       height: 40,
                       width: double.maxFinite,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
                         color: Colors.blueGrey[100],
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: TextField(
-                        controller: _zoneController,
-                        textAlignVertical: TextAlignVertical.center,
-                        textAlign: TextAlign.center,
-                        decoration: const InputDecoration(
-                          border: InputBorder.none,
-                          hintText: "",
+                      child: DropdownButton<int>(
+                        isExpanded: true,
+                        value: _zone,
+                        onChanged: (var value) {
+                          setState(() {
+                            _zone = value;
+                          });
+                        },
+                        icon: const Icon(Icons.arrow_downward),
+                        elevation: 0,
+                        underline: Container(
+                          height: 0,
                         ),
+                        items: _dropdownZone,
                       ),
                     ),
                   ],
@@ -255,8 +297,8 @@ class _AddStockState extends State<AddStock> {
                     backgroundColor: Colors.green,
                   ),
                 );
-                context.read<StockProvider>().setStockList();
                 Navigator.of(context).pop();
+                return;
               }
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
@@ -276,22 +318,23 @@ class _AddStockState extends State<AddStock> {
   }
 
   bool add() {
-    context
-        .read<StockProvider>()
-        .query(query: '''INSERT INTO products(name,category,model,
+    context.read<StockProvider>().query(
+      query: '''INSERT INTO products(name,category,model,
         sku,quantity,remain,zone, creation_date,modified_date)
           VALUES(
             '${_nameController.text}',
-            '${_categoryController.text}',
+            '$_category',
             '${_modelController.text}',
             '${_skuController.text}',
             ${_quantityController.text},
             ${_quantityController.text},
-            ${_zoneController.text},
+            $_zone,
             NOW(),
             NOW()
           );
-        ''');
+        ''',
+      filter: "where remain > 0 order by id desc",
+    );
     return true;
   }
 }

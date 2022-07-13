@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
-
 import 'app_bar.dart';
 
 class Stock extends StatefulWidget {
@@ -169,7 +168,7 @@ class _StockState extends State<Stock> {
           Expanded(
             flex: 13,
             child: Text(
-              item['category'].toString(),
+              item['catName'].toString(),
               style: TextStyle(
                   color: context.watch<StockProvider>().selected == index
                       ? Colors.white
@@ -211,7 +210,7 @@ class _StockState extends State<Stock> {
           Expanded(
             flex: 7,
             child: Text(
-              item['zone'].toString(),
+              item['zoneName'].toString(),
             ),
           ),
           Expanded(
@@ -229,16 +228,5 @@ class _StockState extends State<Stock> {
         ],
       ),
     );
-  }
-
-  bool expireSoon(item) {
-    var exp = item['expiration_date'].toString().split('/');
-    DateTime now = DateTime.now();
-
-    if (exp.length == 3) {
-      if (int.parse(exp[2]) - now.year > 1) return false;
-      if (int.parse(exp[1]) - now.month > 6) return false;
-    }
-    return true;
   }
 }
