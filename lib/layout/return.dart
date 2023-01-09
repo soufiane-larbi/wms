@@ -3,14 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
 import 'app_bar.dart';
 
-class Stock extends StatefulWidget {
-  const Stock({Key? key}) : super(key: key);
+class ReturnScreen extends StatefulWidget {
+  const ReturnScreen({Key? key}) : super(key: key);
 
   @override
-  State<Stock> createState() => _StockState();
+  State<ReturnScreen> createState() => _ReturnScreenState();
 }
 
-class _StockState extends State<Stock> {
+class _ReturnScreenState extends State<ReturnScreen> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -45,7 +45,7 @@ class _StockState extends State<Stock> {
             ),
             color: Colors.white,
           ),
-          child: stockHeader(),
+          child: returnHeader(),
         ),
         Expanded(
           child: Container(
@@ -61,33 +61,33 @@ class _StockState extends State<Stock> {
               ),
               color: Colors.white,
             ),
-            child: stockListView(),
+            child: returnListView(),
           ),
         ),
       ],
     );
   }
 
-  Widget stockListView() {
+  Widget returnListView() {
     return ListView.builder(
-      itemCount: context.watch<StockProvider>().stockList.length,
+      itemCount: context.watch<StockProvider>().returnList.length,
       itemBuilder: (context, index) {
         return InkWell(
           onTap: () {
-            context.read<StockProvider>().changeSelected(index);
+            context.read<StockProvider>().changeReturnSelected(index);
           },
           child: Container(
             height: 40,
             width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.only(right: 8),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(15),
-              color: context.watch<StockProvider>().selected == index
+              color: context.watch<StockProvider>().returnSelected == index
                   ? Colors.blue
                   : Colors.white,
             ),
-            child: stockItem(
-              context.watch<StockProvider>().stockList[index],
+            child: returnItem(
+              context.read<StockProvider>().returnList[index],
               index,
             ),
           ),
@@ -96,113 +96,158 @@ class _StockState extends State<Stock> {
     );
   }
 
-  Widget stockHeader() {
+  Widget returnHeader() {
     return Row(
       children: const [
+        SizedBox(width: 6),
         Expanded(
-          flex: 13,
+          flex: 10,
           child: Text('Code Article'),
         ),
         Expanded(
-          flex: 13,
+          flex: 10,
           child: Text('Désignation'),
         ),
         Expanded(
-          flex: 13,
+          flex: 10,
           child: Text('Produit'),
         ),
         Expanded(
-          flex: 13,
+          flex: 6,
           child: Text('Prix'),
         ),
         Expanded(
-          flex: 7,
+          flex: 6,
           child: Text('Quantité'),
         ),
         Expanded(
-          flex: 9,
-          child: Text('Date De Création'),
+          flex: 6,
+          child: Text('Ticket'),
         ),
         Expanded(
-          flex: 9,
-          child: Text('Dernier Modification'),
+          flex: 10,
+          child: Text('Bénéficiaire'),
+        ),
+        Expanded(
+          flex: 5,
+          child: Text('Statu'),
+        ),
+        Expanded(
+          flex: 10,
+          child: Text('Date'),
         ),
       ],
     );
   }
 
-  Widget stockItem(item, index) {
+  Widget returnItem(item, index) {
     return SizedBox(
       height: double.maxFinite,
       width: double.maxFinite,
       child: Row(
         children: [
+          Container(
+            alignment: Alignment.center,
+            width: 14,
+            child: Container(
+              height: 6,
+              width: 6,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(100),
+                color: item['status'] == 0
+                    ? Colors.orange[800]
+                    : item['status'] == 1
+                        ? Colors.green[500]
+                        : Colors.red[800],
+              ),
+            ),
+          ),
           Expanded(
-            flex: 13,
+            flex: 10,
             child: Text(
-              item['id'].toString(),
+              item['pdr'].toString(),
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),
           ),
           Expanded(
-            flex: 13,
+            flex: 10,
             child: Text(
               item['name'].toString(),
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),
           ),
           Expanded(
-            flex: 13,
+            flex: 10,
             child: Text(
               item['product'].toString(),
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),
           ),
           Expanded(
-            flex: 13,
+            flex: 6,
             child: Text(
               item['price'].toString() + ' DZD',
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),
           ),
           Expanded(
-            flex: 7,
+            flex: 6,
             child: Text(
               item['quantity'].toString(),
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),
           ),
           Expanded(
-            flex: 9,
+            flex: 6,
             child: Text(
-              item['creation_date'].toString(),
+              item['ticket'].toString(),
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),
           ),
           Expanded(
-            flex: 9,
+            flex: 10,
             child: Text(
-              item['modified_date'].toString(),
+              item['beneficiary'].toString(),
               style: TextStyle(
-                  color: context.watch<StockProvider>().selected == index
+                  color: context.watch<StockProvider>().returnSelected == index
+                      ? Colors.white
+                      : Colors.black),
+            ),
+          ),
+          Expanded(
+            flex: 5,
+            child: Text(
+              item['status'] == 0 ? 'En Attende' : 'Retourne',
+              style: TextStyle(
+                  color: context.watch<StockProvider>().returnSelected == index
+                      ? Colors.white
+                      : Colors.black),
+            ),
+          ),
+          Expanded(
+            flex: 10,
+            child: Text(
+              item['date'].toString(),
+              style: TextStyle(
+                  color: context.watch<StockProvider>().returnSelected == index
                       ? Colors.white
                       : Colors.black),
             ),

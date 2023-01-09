@@ -12,7 +12,6 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController _userController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _connected = false;
   String _login = 'Connecter';
 
   @override
@@ -108,34 +107,25 @@ class _LoginState extends State<Login> {
               setState(() {
                 _login = 'Connexion';
               });
-              await context
-                  .read<UserProvider>()
-                  .setUserList(query: '''where user = '${_userController.text}' 
-                and password = '${_passwordController.text}'
-                ''').then(
-                (_) {
-                  setState(() {
-                    _connected =
-                        context.read<UserProvider>().userList.length > 0;
-                    if (!_connected) {
-                      setState(() {
-                        _login = 'Connecter';
-                      });
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          backgroundColor: Colors.red,
-                          content: Text(
-                            'Utilisateur ou Mot de pass est incorrect.',
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      );
-                      return;
-                    }
-                    context.read<UserProvider>().setConnected(true);
-                  });
-                },
-              );
+              if (!await context.read<UserProvider>().auth(
+                    user: _userController.text,
+                    password: _passwordController.text,
+                  )) {
+                setState(() {
+                  _login = 'Connecter';
+                  _passwordController.text = '';
+                });
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text(
+                      'Utilisateur ou Mot de pass est incorrect.',
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                );
+                return;
+              }
             },
             child: Container(
               height: 40,

@@ -1,88 +1,95 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:whm/helper/provider/category_provider.dart';
+import 'package:whm/helper/config.dart';
 import 'package:whm/helper/provider/history_provider.dart';
 import 'package:whm/helper/provider/layout_provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
-import 'package:whm/helper/provider/zone_provider.dart';
-import 'package:whm/layout/category.dart';
+import 'package:whm/helper/provider/bon_provider.dart';
+import 'package:whm/layout/dashbord.dart';
+import 'package:whm/layout/history.dart';
+import 'package:whm/layout/return.dart';
 import 'package:whm/layout/side_menu.dart';
 import 'helper/provider/user_provider.dart';
 import 'layout/login.dart';
 import 'layout/stock.dart';
 import 'package:mysql1/mysql1.dart';
-import 'layout/zone.dart';
+import 'layout/bon.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  var settings = ConnectionSettings(
-    host: 'localhost',
-    port: 3306,
-    user: 'root',
-  );
-  var conn = await MySqlConnection.connect(settings);
-  await conn.query("CREATE DATABASE IF NOT EXISTS STOCK");
+  var conn = await MySqlConnection.connect(AppConfig().DB_CONNECTION);
+  await conn.query("CREATE DATABASE IF NOT EXISTS sav_user");
   await conn.query(
-    '''CREATE TABLE IF NOT EXISTS `stock`.`zone` (
-      `id` INT NOT NULL AUTO_INCREMENT ,
-      `name` VARCHAR(50) NOT NULL ,
-      `address` VARCHAR(250) NOT NULL ,
-      `creation_date` TIMESTAMP NOT NULL ,
-      `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-      PRIMARY KEY (`id`)) ENGINE = MyISAM;
-    ''',
-  );
-  await conn.query(
-    '''CREATE TABLE IF NOT EXISTS `stock`.`category` (
-      `id` INT NOT NULL AUTO_INCREMENT ,
-      `name` VARCHAR(100) NOT NULL ,
-      `creation_date` TIMESTAMP NOT NULL ,
-      `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-      PRIMARY KEY (`id`)) ENGINE = MyISAM;
-    ''',
-  );
-  await conn.query(
-    '''CREATE TABLE IF NOT EXISTS `stock`.`products` ( 
-      `id` INT NOT NULL AUTO_INCREMENT ,
-      `name` VARCHAR(50) NOT NULL ,
-      `model` VARCHAR(30) NOT NULL ,
-      `category` INT NOT NULL ,
-      `sku` VARCHAR(30) NULL ,
+    '''CREATE TABLE IF NOT EXISTS `sav_user`.`pdr` ( 
+      `id` VARCHAR(64) NOT NULL ,
+      `name` VARCHAR(64) NOT NULL ,
+      `product` VARCHAR(64) NOT NULL ,
       `quantity` INT NOT NULL ,
-      `remain` INT NOT NULL ,
-      `zone` INT NOT NULL ,
+      `price` FLOAT NOT NULL DEFAULT 0.0,
       `creation_date` TIMESTAMP NOT NULL ,
       `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
-      PRIMARY KEY (`id`),
-      FOREIGN KEY (`zone`) REFERENCES `stock`.`zone`(`id`),
-      FOREIGN KEY (`category`) REFERENCES `stock`.`category`(`id`)) ENGINE = MyISAM;
+      PRIMARY KEY (`id`)
+      ) ENGINE = MyISAM;
     ''',
   );
   await conn.query(
-    '''CREATE TABLE IF NOT EXISTS `stock`.`users` ( 
-      `id` INT NOT NULL AUTO_INCREMENT , 
-      `user` VARCHAR(50) NOT NULL ,
-      `password` VARCHAR(20) NOT NULL ,
-      `name` VARCHAR(35) NOT NULL ,
-      `prename` VARCHAR(35) NOT NULL , 
+    '''CREATE TABLE IF NOT EXISTS `sav_user`.`returnPdr` ( 
+      `id` int NOT NULL AUTO_INCREMENT ,
+      `pdr` VARCHAR(64) NOT NULL ,
+      `bon` INT NOT NULL ,
+      `ticket` VARCHAR(64) NOT NULL ,
+      `beneficiary` VARCHAR(64) NOT NULL ,
+      `quantity` INT NOT NULL ,
+      `price` FLOAT NOT NULL DEFAULT 0.0,
+      `status` INT NOT NULL DEFAULT 0,
+      `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ,
+      PRIMARY KEY (`id`),
+      FOREIGN KEY (`pdr`) REFERENCES `sav`.`pdr`(`id`),
+      FOREIGN KEY (`bon`) REFERENCES `sav`.`bon`(`id`)
+      ) ENGINE = MyISAM;
+    ''',
+  );
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `sav_user`.`users` ( 
+      `user` VARCHAR(64) NOT NULL ,
+      `password` VARCHAR(64) NOT NULL ,
+      `name` VARCHAR(64) NOT NULL ,
+      `prename` VARCHAR(64) NOT NULL , 
+      `role` VARCHAR(64) NOT NULL , 
       `creation_date` TIMESTAMP NOT NULL ,
       `modified_date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
-      PRIMARY KEY (`id`)) ENGINE = MyISAM;
+      PRIMARY KEY (`user`)) ENGINE = MyISAM;
     ''',
   );
   await conn.query(
-    '''CREATE TABLE IF NOT EXISTS `stock`.`history` ( 
+    '''CREATE TABLE IF NOT EXISTS `sav_user`.`history` ( 
       `id` INT NOT NULL AUTO_INCREMENT , 
-      `user` INT NULL , 
-      `product` INT NOT NULL , 
-      `operation` INT NOT NULL , 
+      `user` VARCHAR(64) NOT NULL , 
+      `ticket` VARCHAR(64) NOT NULL ,
+      `beneficiary` VARCHAR(128) NOT NULL ,
+      `pdr` VARCHAR(64) NOT NULL ,
+      `price` VARCHAR(64) NOT NULL DEFAULT '0.0',
+      `operation` VARCHAR(10) NOT NULL , 
       `previous_quantity` INT NOT NULL , 
       `new_quantity` INT NOT NULL , 
       `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
       PRIMARY KEY (`id`),
-      FOREIGN KEY (`product`) REFERENCES `stock`.`products`(`id`)) ENGINE = MyISAM;
+      FOREIGN KEY (`pdr`) REFERENCES `sav`.`pdr`(`id`)
+      ) ENGINE = MyISAM;
+    ''',
+  );
+  await conn.query(
+    '''CREATE TABLE IF NOT EXISTS `sav_user`.`bon` ( 
+      `id` INT NOT NULL AUTO_INCREMENT , 
+      `history` VARCHAR(1024) NOT NULL , 
+      `user` VARCHAR(64) NOT NULL ,
+      `beneficiary` VARCHAR(64) NOT NULL ,
+      `ticket` VARCHAR(64) NOT NULL ,
+      `total` double NOT NULL ,
+      `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , 
+      PRIMARY KEY (`id`)
+      ) ENGINE = MyISAM;
     ''',
   );
   conn.close();
@@ -91,8 +98,7 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => StockProvider()),
         ChangeNotifierProvider(create: (_) => HistoryProvider()),
-        ChangeNotifierProvider(create: (_) => CategoryProvider()),
-        ChangeNotifierProvider(create: (_) => ZoneProvider()),
+        ChangeNotifierProvider(create: (_) => BonProvider()),
         ChangeNotifierProvider(create: (_) => LayoutProvider()),
         ChangeNotifierProvider(create: (_) => UserProvider())
       ],
@@ -113,16 +119,19 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final List<Widget> _screens = [
     const Stock(),
-    const CategoryScreen(),
-    const ZoneScreen(),
+    const ReturnScreen(),
+    const BonScreen(),
+    const History(),
+    const Dashboard(),
   ];
   @override
   void initState() {
     try {
       context.read<StockProvider>().setStockList();
       context.read<HistoryProvider>().setHistoryList();
-      context.read<CategoryProvider>().setCategoryList();
-      context.read<ZoneProvider>().setZoneList();
+      context.read<StockProvider>().setReturnList();
+      context.read<BonProvider>().setBonList();
+      //AppConfig().autoRefresh(run: true);
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),

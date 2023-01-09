@@ -32,21 +32,27 @@ class _SideMenuState extends State<SideMenu> {
         ),
         const SizedBox(height: 4),
         menu(
-          title: 'Categorie',
+          title: 'PDRs S /G',
           index: 1,
-          icon: Icons.category,
+          icon: Icons.horizontal_split_outlined,
         ),
         const SizedBox(height: 4),
         menu(
-          title: 'Zone',
+          title: 'Bons',
           index: 2,
-          icon: Icons.warehouse,
+          icon: Icons.difference_outlined,
         ),
         const SizedBox(height: 4),
         menu(
-          title: 'Status',
+          title: 'Historiques',
           index: 3,
-          icon: Icons.stacked_line_chart_sharp,
+          icon: Icons.history_rounded,
+        ),
+        const SizedBox(height: 4),
+        menu(
+          title: 'Tableau De Bord',
+          index: 4,
+          icon: Icons.incomplete_circle_rounded,
         ),
       ],
     );
