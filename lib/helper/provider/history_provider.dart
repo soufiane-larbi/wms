@@ -32,8 +32,8 @@ class HistoryProvider with ChangeNotifier {
 
   Future<bool> addHistory({
     required String? user,
-    String ticket = 'N/D',
-    String beneficiary = 'N/D',
+    String ticket = '-',
+    String beneficiary = '-',
     required String? pdr,
     required String? operation,
     int previousQuantity = 0,

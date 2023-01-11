@@ -84,7 +84,7 @@ class _ReturnScreenState extends State<ReturnScreen> {
               borderRadius: BorderRadius.circular(15),
               color: context.watch<StockProvider>().returnSelected == index
                   ? Colors.blue
-                  : Colors.white,
+                  : Colors.transparent,
             ),
             child: returnItem(
               context.read<StockProvider>().returnList[index],

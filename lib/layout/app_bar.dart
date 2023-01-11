@@ -6,6 +6,7 @@ import 'package:whm/helper/provider/history_provider.dart';
 import 'package:whm/helper/provider/layout_provider.dart';
 import 'package:whm/helper/provider/user_provider.dart';
 import 'package:whm/layout/add_bon.dart';
+import 'package:whm/layout/edit_pdr.dart';
 import 'package:whm/layout/remove_stock.dart';
 import 'package:provider/provider.dart';
 import 'package:whm/helper/provider/stock_provider.dart';
@@ -13,6 +14,8 @@ import '../helper/print.dart';
 import 'add_stock.dart';
 
 class StockToolBar extends StatefulWidget {
+  static final TextEditingController editingController =
+      TextEditingController();
   const StockToolBar({Key? key}) : super(key: key);
 
   @override
@@ -20,8 +23,6 @@ class StockToolBar extends StatefulWidget {
 }
 
 class _StockToolBarState extends State<StockToolBar> {
-  final TextEditingController _editingController = TextEditingController();
-
   @override
   Widget build(BuildContext context) {
     return Visibility(
@@ -129,6 +130,38 @@ class _StockToolBarState extends State<StockToolBar> {
                         showDialog(
                           context: context,
                           builder: (_) {
+                            return AlertDialog(
+                              title: Text(
+                                  "Modifier: ${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}"),
+                              content: SizedBox(
+                                width: 410,
+                                height: 280,
+                                child: EditPDR(
+                                  pdr: context.read<StockProvider>().stockList[
+                                      context.read<StockProvider>().selected],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                      },
+                      child: const Icon(
+                        Icons.edit,
+                        color: Colors.blue,
+                        size: 40,
+                      ),
+                    ),
+                  ),
+                ),
+                Visibility(
+                  visible: context.read<LayoutProvider>().screenIndex == 0,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 5),
+                    child: InkWell(
+                      onTap: () {
+                        showDialog(
+                          context: context,
+                          builder: (_) {
                             return const AlertDialog(
                               title: Text("Ajouter PDR"),
                               content: SizedBox(
@@ -142,7 +175,7 @@ class _StockToolBarState extends State<StockToolBar> {
                       },
                       child: const Icon(
                         Icons.move_to_inbox,
-                        color: Colors.blue,
+                        color: Colors.green,
                         size: 40,
                       ),
                     ),
@@ -439,7 +472,7 @@ class _StockToolBarState extends State<StockToolBar> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: TextField(
-              controller: _editingController,
+              controller: StockToolBar.editingController,
               style: const TextStyle(fontSize: 20),
               decoration: InputDecoration(
                 border: InputBorder.none,
@@ -455,7 +488,7 @@ class _StockToolBarState extends State<StockToolBar> {
         InkWell(
           onTap: () async {},
           child: Icon(
-            _editingController.text == ''
+            StockToolBar.editingController.text == ''
                 ? Icons.search
                 : Icons.cancel_outlined,
             size: 35,
@@ -469,9 +502,9 @@ class _StockToolBarState extends State<StockToolBar> {
     if (context.read<LayoutProvider>().screenIndex == 0) {
       context.read<StockProvider>().setStockList(
         filter: '''
-                    WHERE (id LIKE '%${_editingController.text}%'
-                    OR name LIKE '%${_editingController.text}%'
-                    OR product LIKE '%${_editingController.text}%') 
+                    WHERE (id LIKE '%${StockToolBar.editingController.text}%'
+                    OR name LIKE '%${StockToolBar.editingController.text}%'
+                    OR product LIKE '%${StockToolBar.editingController.text}%') 
                   ''',
       );
       return;
@@ -479,11 +512,11 @@ class _StockToolBarState extends State<StockToolBar> {
     if (context.read<LayoutProvider>().screenIndex == 1) {
       context.read<StockProvider>().setReturnList(
         filter: '''
-                    WHERE (pdr.id LIKE '%${_editingController.text}%'
-                    OR pdr.name LIKE '%${_editingController.text}%'
-                    OR pdr.product LIKE '%${_editingController.text}%'
-                    OR returnPdr.ticket LIKE '%${_editingController.text}%'
-                    OR returnPdr.beneficiary LIKE '%${_editingController.text}%'
+                    WHERE (pdr.id LIKE '%${StockToolBar.editingController.text}%'
+                    OR pdr.name LIKE '%${StockToolBar.editingController.text}%'
+                    OR pdr.product LIKE '%${StockToolBar.editingController.text}%'
+                    OR returnPdr.ticket LIKE '%${StockToolBar.editingController.text}%'
+                    OR returnPdr.beneficiary LIKE '%${StockToolBar.editingController.text}%'
                     ) 
                   ''',
       );
@@ -492,7 +525,7 @@ class _StockToolBarState extends State<StockToolBar> {
     if (context.read<LayoutProvider>().screenIndex == 2) {
       context.read<BonProvider>().setBonList(
         filter: '''
-                    WHERE history like '%${_editingController.text}%'
+                    WHERE history like '%${StockToolBar.editingController.text}%'
                   ''',
       );
       return;
@@ -500,9 +533,9 @@ class _StockToolBarState extends State<StockToolBar> {
     if (context.read<LayoutProvider>().screenIndex == 3) {
       context.read<HistoryProvider>().setHistoryList(
         filter: '''
-                    WHERE pdr.id LIKE '%${_editingController.text}%'
-                    OR history.ticket LIKE '%${_editingController.text}%'
-                    OR history.beneficiary LIKE '%${_editingController.text}%'
+                    WHERE pdr.id LIKE '%${StockToolBar.editingController.text}%'
+                    OR history.ticket LIKE '%${StockToolBar.editingController.text}%'
+                    OR history.beneficiary LIKE '%${StockToolBar.editingController.text}%'
                   ''',
       );
       return;

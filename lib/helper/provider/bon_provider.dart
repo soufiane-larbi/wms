@@ -67,7 +67,7 @@ class BonProvider with ChangeNotifier {
     return result.insertId!;
   }
 
-  manualReset() {
+  reset() {
     _beneficiary = '';
     _ticket = '';
     _tempBonList.clear();

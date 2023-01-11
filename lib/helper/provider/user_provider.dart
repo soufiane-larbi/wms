@@ -20,9 +20,12 @@ class UserProvider with ChangeNotifier {
       conn.close();
       if (_userList.isNotEmpty) {
         _user = _userList[0]['user'];
-        _name = "${_userList[0]['name']} ${_userList[0]['prename']}";
+        _name = "${_userList[0]['prename']} ${_userList[0]['name']}";
         _role = _userList[0]['role'];
         _connected = true;
+        AppConfig.isAdmin = _role!.contains('min') ? true : false;
+        AppConfig.user = _user!;
+        AppConfig.username = name!;
         notifyListeners();
         return true;
       }
@@ -30,5 +33,11 @@ class UserProvider with ChangeNotifier {
     } catch (_) {
       return false;
     }
+  }
+
+  reset() {
+    _connected = false;
+    _name = _user = _role = null;
+    notifyListeners();
   }
 }

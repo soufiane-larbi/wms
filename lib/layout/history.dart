@@ -99,15 +99,15 @@ class History extends StatelessWidget {
           child: Text('Bénéficiaire'),
         ),
         Expanded(
-          flex: 2,
+          flex: 3,
           child: Text('Opération'),
         ),
         Expanded(
-          flex: 2,
+          flex: 1,
           child: Text('Quantité'),
         ),
         Expanded(
-          flex: 2,
+          flex: 1,
           child: Text('Prix'),
         ),
         Expanded(
@@ -115,7 +115,7 @@ class History extends StatelessWidget {
           child: Text('Utilisateur'),
         ),
         Expanded(
-          flex: 3,
+          flex: 2,
           child: Text('Date'),
         ),
       ],
@@ -123,16 +123,29 @@ class History extends StatelessWidget {
   }
 
   Widget historyItem({history, context}) {
+    double height =
+        42.0 + ((history['operation'].toString().split(':')).length - 1) * 6.0;
     return Container(
       padding: const EdgeInsets.only(right: 8),
-      height: 40,
       width: double.maxFinite,
+      height: height,
       child: Column(
         children: [
+          const SizedBox(
+            height: 1,
+          ),
           Container(
-            height: 0.3,
+            height: 0.5,
             width: double.infinity,
-            color: Colors.grey,
+            color: history['operation'].toString().contains('Sortie')
+                ? Colors.orange[800]
+                : history['operation'].toString().contains('Ajouter')
+                    ? Colors.green[500]
+                    : history['operation'].toString().contains('Retourne')
+                        ? Colors.purple
+                        : history['operation'].toString().contains('Modifier')
+                            ? Colors.blue
+                            : Colors.red[800],
           ),
           const Spacer(),
           Row(
@@ -152,8 +165,12 @@ class History extends StatelessWidget {
                             : history['operation']
                                     .toString()
                                     .contains('Retourne')
-                                ? Colors.blue[500]
-                                : Colors.red[800],
+                                ? Colors.purple
+                                : history['operation']
+                                        .toString()
+                                        .contains('Modifier')
+                                    ? Colors.blue
+                                    : Colors.red[800],
                   ),
                 ),
               ),
@@ -174,15 +191,15 @@ class History extends StatelessWidget {
                 child: Text(history['beneficiary'].toString()),
               ),
               Expanded(
-                flex: 2,
+                flex: 3,
                 child: Text(history['operation'].toString()),
               ),
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Text(history['new_quantity'].toString()),
               ),
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Text(history['price'].toString()),
               ),
               Expanded(
@@ -190,15 +207,27 @@ class History extends StatelessWidget {
                 child: Text(history['user'].toString()),
               ),
               Expanded(
-                flex: 3,
+                flex: 2,
                 child: Text(history['date'].toString()),
               ),
             ],
           ),
           const Spacer(),
-          const SizedBox(
-            height: 0.3,
+          Container(
+            height: 0.5,
             width: double.infinity,
+            color: history['operation'].toString().contains('Sortie')
+                ? Colors.orange[800]
+                : history['operation'].toString().contains('Ajouter')
+                    ? Colors.green[500]
+                    : history['operation'].toString().contains('Retourne')
+                        ? Colors.purple
+                        : history['operation'].toString().contains('Modifier')
+                            ? Colors.blue
+                            : Colors.red[800],
+          ),
+          const SizedBox(
+            height: 1,
           ),
         ],
       ),

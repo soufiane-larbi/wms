@@ -84,7 +84,7 @@ class _StockState extends State<Stock> {
               borderRadius: BorderRadius.circular(15),
               color: context.watch<StockProvider>().selected == index
                   ? Colors.blue
-                  : Colors.white,
+                  : Colors.transparent,
             ),
             child: stockItem(
               context.watch<StockProvider>().stockList[index],
@@ -121,11 +121,11 @@ class _StockState extends State<Stock> {
         ),
         Expanded(
           flex: 9,
-          child: Text('Date De Création'),
+          child: Text('Dernier Modification'),
         ),
         Expanded(
           flex: 9,
-          child: Text('Dernier Modification'),
+          child: Text('Date De Création'),
         ),
       ],
     );
@@ -133,7 +133,7 @@ class _StockState extends State<Stock> {
 
   Widget stockItem(item, index) {
     return SizedBox(
-      height: double.maxFinite,
+      height: 40,
       width: double.maxFinite,
       child: Row(
         children: [
@@ -190,7 +190,7 @@ class _StockState extends State<Stock> {
           Expanded(
             flex: 9,
             child: Text(
-              item['creation_date'].toString(),
+              item['modified_date'].toString(),
               style: TextStyle(
                   color: context.watch<StockProvider>().selected == index
                       ? Colors.white
@@ -200,7 +200,7 @@ class _StockState extends State<Stock> {
           Expanded(
             flex: 9,
             child: Text(
-              item['modified_date'].toString(),
+              item['creation_date'].toString(),
               style: TextStyle(
                   color: context.watch<StockProvider>().selected == index
                       ? Colors.white

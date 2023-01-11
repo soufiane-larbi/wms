@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:whm/helper/config.dart';
+import 'package:whm/layout/app_bar.dart';
 
 class StockProvider with ChangeNotifier {
   final _stockList = [],
@@ -30,6 +31,36 @@ class StockProvider with ChangeNotifier {
   get stats => _stats;
   get warrantyStats => _statsWarranty;
 
+  Future<int> updatePDR({id, newId, quantity, price, name, product}) async {
+    try {
+      var conn = await MySqlConnection.connect(AppConfig().DB_CONNECTION);
+      String query = '''UPDATE pdr SET 
+      id = '$newId',
+      name = '$name',
+      product = '$product',
+      quantity = $quantity,
+      price = $price,
+      modified_date = NOW()
+      WHERE id = '$id';
+      ''';
+      var result = await conn.query(
+        query,
+      );
+      conn.close();
+      _selected = 0;
+      setStockList(
+        filter: '''
+                    WHERE (id LIKE '%${StockToolBar.editingController.text}%'
+                    OR name LIKE '%${StockToolBar.editingController.text}%'
+                    OR product LIKE '%${StockToolBar.editingController.text}%') 
+                  ''',
+      );
+      return result.affectedRows!;
+    } catch (_) {
+      return 0;
+    }
+  }
+
   void changeReturnSelected(index) {
     _returnSelected = index;
     notifyListeners();
@@ -37,6 +68,14 @@ class StockProvider with ChangeNotifier {
 
   void changeSelected(index) {
     _selected = index;
+    notifyListeners();
+  }
+
+  Future<void> reset({filter = ''}) async {
+    _selected = 0;
+    _returnSelected = 0;
+    setStockList();
+    setReturnList();
     notifyListeners();
   }
 

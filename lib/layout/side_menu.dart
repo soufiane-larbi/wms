@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whm/helper/provider/layout_provider.dart';
+import 'package:whm/helper/provider/user_provider.dart';
+
+import '../helper/provider/bon_provider.dart';
+import '../helper/provider/history_provider.dart';
+import '../helper/provider/stock_provider.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({Key? key}) : super(key: key);
@@ -21,9 +26,6 @@ class _SideMenuState extends State<SideMenu> {
           child: Image.asset(
             'assets/logo.png',
           ),
-        ),
-        const SizedBox(
-          height: 10,
         ),
         menu(
           title: 'Produits',
@@ -53,6 +55,36 @@ class _SideMenuState extends State<SideMenu> {
           title: 'Tableau De Bord',
           index: 4,
           icon: Icons.incomplete_circle_rounded,
+        ),
+        const Spacer(),
+        Container(
+          margin: const EdgeInsets.all(8),
+          height: 40,
+          decoration: BoxDecoration(
+            color: Colors.blueGrey[100],
+            borderRadius: BorderRadius.circular(25),
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                InkWell(
+                  onTap: () {
+                    logout();
+                  },
+                  child: const Icon(
+                    Icons.logout_rounded,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(
+                  width: 5,
+                ),
+                Text(context.read<UserProvider>().name),
+              ],
+            ),
+          ),
         ),
       ],
     );
@@ -124,5 +156,13 @@ class _SideMenuState extends State<SideMenu> {
         ),
       ),
     );
+  }
+
+  logout() {
+    context.read<UserProvider>().reset();
+    context.read<StockProvider>().reset();
+    context.read<HistoryProvider>().setHistoryList();
+    context.read<BonProvider>().reset();
+    context.read<LayoutProvider>().setScreenIndex(0);
   }
 }

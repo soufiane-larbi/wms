@@ -107,7 +107,7 @@ class _BonCommandeState extends State<BonCommande> {
                         pdrId: bon['pdrId'],
                       );
                 }
-                context.read<BonProvider>().manualReset();
+                context.read<BonProvider>().reset();
                 setState(() {
                   _loading = false;
                 });

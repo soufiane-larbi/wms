@@ -131,7 +131,7 @@ class _BonScreenState extends State<BonScreen> {
         borderRadius: BorderRadius.circular(15),
         color: context.watch<BonProvider>().selected == index
             ? Colors.blue
-            : Colors.white,
+            : Colors.transparent,
       ),
       child: Column(
         children: [
