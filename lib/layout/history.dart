@@ -123,48 +123,36 @@ class History extends StatelessWidget {
   }
 
   Widget historyItem({history, context}) {
-    double height =
-        42.0 + ((history['operation'].toString().split(':')).length - 1) * 6.0;
+    int lines = (history['operation'].toString().length / 40).round();
+    // lines = lines == 0 ? 0 : lines;
+    double height = 42.0 + lines * 15.0;
     return Container(
       padding: const EdgeInsets.only(right: 8),
       width: double.maxFinite,
       height: height,
       child: Column(
         children: [
-          const SizedBox(
-            height: 1,
-          ),
           Container(
             height: 0.5,
             width: double.infinity,
-            color: history['operation'].toString().contains('Sortie')
-                ? Colors.orange[800]
-                : history['operation'].toString().contains('Ajouter')
-                    ? Colors.green[500]
-                    : history['operation'].toString().contains('Retourne')
-                        ? Colors.purple
-                        : history['operation'].toString().contains('Modifier')
-                            ? Colors.blue
-                            : Colors.red[800],
+            color: Colors.grey,
           ),
           const Spacer(),
           Row(
             children: [
               Container(
                 alignment: Alignment.center,
-                width: 14,
+                width: 16,
                 child: Container(
-                  height: 6,
-                  width: 6,
+                  height: 20,
+                  width: 4,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(100),
                     color: history['operation'].toString().contains('Sortie')
                         ? Colors.orange[800]
                         : history['operation'].toString().contains('Ajouter')
                             ? Colors.green[500]
-                            : history['operation']
-                                    .toString()
-                                    .contains('Retourne')
+                            : history['operation'].toString().contains('Retour')
                                 ? Colors.purple
                                 : history['operation']
                                         .toString()
@@ -192,7 +180,11 @@ class History extends StatelessWidget {
               ),
               Expanded(
                 flex: 3,
-                child: Text(history['operation'].toString()),
+                child: Text(
+                  history['operation'].toString(),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: lines < 1 ? 1 : lines + 1,
+                ),
               ),
               Expanded(
                 flex: 1,
@@ -213,22 +205,6 @@ class History extends StatelessWidget {
             ],
           ),
           const Spacer(),
-          Container(
-            height: 0.5,
-            width: double.infinity,
-            color: history['operation'].toString().contains('Sortie')
-                ? Colors.orange[800]
-                : history['operation'].toString().contains('Ajouter')
-                    ? Colors.green[500]
-                    : history['operation'].toString().contains('Retourne')
-                        ? Colors.purple
-                        : history['operation'].toString().contains('Modifier')
-                            ? Colors.blue
-                            : Colors.red[800],
-          ),
-          const SizedBox(
-            height: 1,
-          ),
         ],
       ),
     );

@@ -177,7 +177,7 @@ class _EditPDRState extends State<EditPDR> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: TextField(
-                    enabled: widget.pdr['price'] == 0.0 || AppConfig.isAdmin,
+                    enabled: widget.pdr['price'] <= 10.0 || AppConfig.isAdmin,
                     controller: _priceController,
                     textAlignVertical: TextAlignVertical.center,
                     textAlign: TextAlign.center,

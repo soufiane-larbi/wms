@@ -148,10 +148,10 @@ class _ReturnScreenState extends State<ReturnScreen> {
         children: [
           Container(
             alignment: Alignment.center,
-            width: 14,
+            width: 16,
             child: Container(
-              height: 6,
-              width: 6,
+              height: 20,
+              width: 4,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(100),
                 color: item['status'] == 0

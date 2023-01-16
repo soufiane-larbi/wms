@@ -260,7 +260,14 @@ class _StockToolBarState extends State<StockToolBar> {
                                   .read<BonProvider>()
                                   .bonList[context.read<BonProvider>().selected]
                               ['history']);
-                          await printDoc(context: context, bon: bon);
+                          await printDoc(
+                              context: context,
+                              bon: bon,
+                              date: context
+                                  .read<BonProvider>()
+                                  .bonList[context.read<BonProvider>().selected]
+                                      ['date']
+                                  .toString());
                         } catch (e) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -396,7 +403,7 @@ class _StockToolBarState extends State<StockToolBar> {
                                                     .read<UserProvider>()
                                                     .user,
                                                 pdr: pdr,
-                                                operation: 'Retourn',
+                                                operation: 'Retourné',
                                                 ticket: context
                                                         .read<StockProvider>()
                                                         .returnList[

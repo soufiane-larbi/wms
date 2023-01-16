@@ -311,7 +311,7 @@ class _RemoveStockState extends State<RemoveStock> {
                         setState(
                           () {
                             _quantityHint =
-                                'Max Quantitié est ${widget.quantity}';
+                                'La quantité doit être dans [1~${widget.quantity}]';
                             _quantityController.text = '';
                           },
                         );
@@ -336,7 +336,8 @@ class _RemoveStockState extends State<RemoveStock> {
         _idController.text.isEmpty) {
       return 1;
     }
-    if (int.parse(_quantityController.text) > widget.quantity) return 2;
+    if (int.parse(_quantityController.text) > widget.quantity ||
+        int.parse(_quantityController.text) == 0) return 2;
     context.read<BonProvider>().beneficiary = _beneficiaryController.text;
     context.read<BonProvider>().ticket = _ticketController.text;
     context.read<BonProvider>().addTempBon(

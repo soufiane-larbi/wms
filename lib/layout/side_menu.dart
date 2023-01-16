@@ -34,7 +34,7 @@ class _SideMenuState extends State<SideMenu> {
         ),
         const SizedBox(height: 4),
         menu(
-          title: 'PDRs S /G',
+          title: 'PDRs S/G',
           index: 1,
           icon: Icons.horizontal_split_outlined,
         ),

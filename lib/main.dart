@@ -48,6 +48,7 @@ class _HomeState extends State<Home> {
     const History(),
     const Dashboard(),
   ];
+  int _isDbconnected = -1;
   @override
   void initState() {
     try {
@@ -61,6 +62,7 @@ class _HomeState extends State<Home> {
         SnackBar(content: Text(e.toString())),
       );
     }
+    connect();
     super.initState();
   }
 
@@ -68,19 +70,38 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.blueGrey[100],
-      body: FutureBuilder(
-        future: AppConfig.initDatabase(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            if (snapshot.data == false) return showConnectionError();
-            if (snapshot.data == true &&
-                context.watch<UserProvider>().connected) return showInterface();
-            return showLogin();
-          }
-          return connecting();
-        },
-      ),
+      body: (context.watch<UserProvider>().connected && _isDbconnected == 1)
+          ? showInterface()
+          : _isDbconnected == -1
+              ? connecting()
+              : _isDbconnected == 1
+                  ? showLogin()
+                  : showConnectionError(),
+
+      // FutureBuilder(
+      //   future: AppConfig.initDatabase(),
+      //   builder: (context, snapshot) {
+      //     if (snapshot.hasData || _isDbconnected) {
+      //       if (snapshot.data == true &&
+      //           context.watch<UserProvider>().connected) return showInterface();
+      //       if (snapshot.data == true || _isDbconnected) return showLogin();
+      //       if (snapshot.data == false) return showConnectionError();
+      //     }
+      //     return connecting();
+      //   },
+      // ),
     );
+  }
+
+  connect() async {
+    bool result = await AppConfig.initDatabase();
+    setState(() {
+      _isDbconnected = result == null
+          ? -1
+          : result
+              ? 1
+              : 0;
+    });
   }
 
   Widget connecting() {
@@ -106,9 +127,24 @@ class _HomeState extends State<Home> {
   }
 
   Widget showConnectionError() {
-    return Container(
-      alignment: Alignment.center,
-      child: Text(AppConfig.DB_ERROR),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          alignment: Alignment.center,
+          child: Text(AppConfig.DB_ERROR),
+        ),
+        TextButton(
+          onPressed: () async {
+            setState(() {
+              _isDbconnected = -1;
+            });
+            connect();
+          },
+          child: const Text("Réessayer"),
+        ),
+      ],
     );
   }
 

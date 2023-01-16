@@ -106,7 +106,7 @@ class _BonScreenState extends State<BonScreen> {
           child: Text('Ticket'),
         ),
         Expanded(
-          flex: 6,
+          flex: 7,
           child: Text('Details'),
         ),
         Expanded(
@@ -124,7 +124,7 @@ class _BonScreenState extends State<BonScreen> {
   Widget bonItem(item, index) {
     double height = (jsonDecode(item['history'])).length * 40.0;
     return Container(
-      height: height + 0.3,
+      height: height + 1,
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
@@ -136,7 +136,7 @@ class _BonScreenState extends State<BonScreen> {
       child: Column(
         children: [
           Container(
-            height: 0.3,
+            height: 0.5,
             width: double.infinity,
             color: Colors.grey,
           ),
@@ -186,7 +186,7 @@ class _BonScreenState extends State<BonScreen> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    item['total'].toString(),
+                    item['total'].toString() + ' DZD',
                     style: TextStyle(
                         color: context.watch<BonProvider>().selected == index
                             ? Colors.white
@@ -207,6 +207,9 @@ class _BonScreenState extends State<BonScreen> {
             ),
           ),
           const Spacer(),
+          const SizedBox(
+            height: 0.5,
+          ),
         ],
       ),
     );
