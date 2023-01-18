@@ -389,7 +389,7 @@ class _StockToolBarState extends State<StockToolBar> {
                                         ),
                                       ),
                                       TextButton(
-                                        onPressed: () {
+                                        onPressed: () async {
                                           context
                                               .read<StockProvider>()
                                               .updateReturnStatus(
@@ -425,6 +425,9 @@ class _StockToolBarState extends State<StockToolBar> {
                                                             .returnSelected]
                                                     ['quantity'],
                                               );
+                                          await context
+                                              .read<StockProvider>()
+                                              .setStats();
                                           context
                                               .read<StockProvider>()
                                               .changeReturnSelected(0);

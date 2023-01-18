@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
+import 'package:whm/helper/config.dart';
 
 Future<bool> printDoc(
     {required context, required List<dynamic> bon, String? date}) async {
@@ -68,7 +69,7 @@ Future<bool> printDoc(
                 pw.Spacer(),
                 pw.Center(
                   child: pw.Text(
-                    "Le: ${timeFormater(date: date!)}",
+                    "Le: ${timeFormater(date: date ?? '')}",
                     style: pw.TextStyle(
                       fontWeight: pw.FontWeight.bold,
                     ),
@@ -239,7 +240,8 @@ Future<bool> printDoc(
   );
 
   try {
-    final file = File('generated.pdf');
+    final file = File(
+        'Bons/${AppConfig.user} - ${timeFormater(date: date ?? '').replaceAll(':', '.')}.pdf');
     await file.writeAsBytes(await pdf.save());
     bool print = await Printing.layoutPdf(
       onLayout: (PdfPageFormat format) async => pdf.save(),
@@ -291,7 +293,8 @@ String timeFormater({String date = ''}) {
     String year = DateTime.now().year.toString();
     String hour = DateTime.now().hour.toString().padLeft(2, '0');
     String minute = DateTime.now().minute.toString().padLeft(2, '0');
-    return '$day/$month/$year $hour:$minute';
+
+    return '$day-$month-$year $hour:$minute';
   }
   String year = date.split(' ')[0];
   String time = (date.split(' ')[1]).split('.')[0];
