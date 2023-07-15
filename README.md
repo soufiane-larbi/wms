@@ -1,3 +1,4 @@
+![IMG-20230714-WA0001](https://github.com/soufiane-larbi/wms/assets/94842854/af255f7d-8ae6-4d51-aa5a-b423b779d02e)
 # whm
 
 Simple warehous management.
