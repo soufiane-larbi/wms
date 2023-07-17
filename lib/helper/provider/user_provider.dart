@@ -1,43 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
 import 'package:whm/helper/config.dart';
+import '../../Formater/user_type.dart';
 
 class UserProvider with ChangeNotifier {
-  bool _connected = false;
-  String? _user, _role, _name;
-
+  final List<UserType> _user = [];
   get user => _user;
-  get name => _name;
-  get role => _role;
-  get connected => _connected;
 
-  Future<bool> auth({required user, required password}) async {
+  Future<Object> auth({required user, required password}) async {
     try {
       var conn = await MySqlConnection.connect(AppConfig().DB_CONNECTION);
-      var _userList = [];
-      _userList.addAll(await conn.query(
-          "select * from users where user like '$user' and password = '$password'"));
+      final result = await conn.query(
+          "select * from users where username like '$user' and password = '$password'");
       conn.close();
-      if (_userList.isNotEmpty) {
-        _user = _userList[0]['user'];
-        _name = "${_userList[0]['prename']} ${_userList[0]['name']}";
-        _role = _userList[0]['role'];
-        _connected = true;
-        AppConfig.isAdmin = _role!.contains('min') ? true : false;
-        AppConfig.user = _user!;
-        AppConfig.username = name!;
-        notifyListeners();
-        return true;
+      if (result.isEmpty) {
+        return false;
       }
-      return false;
-    } catch (_) {
-      return false;
+      for (final row in result) {
+        final user = UserType(
+          firstname: row['firstname'],
+          lastname: row['lastname'],
+          profile: row['profile'],
+          username: row['username'],
+          password: row['password'],
+          admin: true,
+          creationDate: row['creation_date'],
+          modifiedDate: row['modified_date'],
+        );
+        _user.add(user);
+      }
+      notifyListeners();
+      return true;
+    } catch (e) {
+      return e;
     }
   }
 
   reset() {
-    _connected = false;
-    _name = _user = _role = null;
+    _user.clear();
     notifyListeners();
   }
 }

@@ -1,11 +1,14 @@
+import 'dart:async';
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:whm/helper/provider/layout_provider.dart';
 import 'package:whm/helper/provider/user_provider.dart';
-
-import '../helper/provider/bon_provider.dart';
+import '../helper/config.dart';
 import '../helper/provider/history_provider.dart';
-import '../helper/provider/stock_provider.dart';
+import '../helper/provider/product_provider.dart';
+import 'app_bar.dart';
+import 'package:rxdart/rxdart.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({Key? key}) : super(key: key);
@@ -20,29 +23,46 @@ class _SideMenuState extends State<SideMenu> {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(10),
-          height: 160,
-          width: 200,
-          child: Image.asset(
-            'assets/logo.png',
-          ),
+            padding: const EdgeInsets.all(0),
+            height: 80,
+            width: 150,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: 50,
+                  child: Image.asset(
+                    'assets/logo.jpg',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+                const Text(
+                  ' WHM',
+                  style: TextStyle(color: Colors.white, fontSize: 32),
+                )
+              ],
+            )),
+        const SizedBox(
+          height: 15,
         ),
+        search(),
         menu(
           title: 'Produits',
           index: 0,
-          icon: Icons.horizontal_split_outlined,
+          icon: Icons.view_quilt_rounded,
         ),
         const SizedBox(height: 4),
         menu(
-          title: 'PDRs S/G',
+          title: 'Categories',
           index: 1,
-          icon: Icons.horizontal_split_outlined,
+          icon: Icons.category_rounded,
         ),
         const SizedBox(height: 4),
         menu(
-          title: 'Bons',
+          title: 'Depots',
           index: 2,
-          icon: Icons.difference_outlined,
+          icon: Icons.warehouse_rounded,
         ),
         const SizedBox(height: 4),
         menu(
@@ -54,38 +74,14 @@ class _SideMenuState extends State<SideMenu> {
         menu(
           title: 'Tableau De Bord',
           index: 4,
-          icon: Icons.incomplete_circle_rounded,
+          icon: Icons.dashboard_rounded,
         ),
         const Spacer(),
-        Container(
-          margin: const EdgeInsets.all(8),
-          height: 40,
-          decoration: BoxDecoration(
-            color: Colors.blueGrey[100],
-            borderRadius: BorderRadius.circular(25),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    logout();
-                  },
-                  child: const Icon(
-                    Icons.logout_rounded,
-                    color: Colors.red,
-                  ),
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(context.read<UserProvider>().name),
-              ],
-            ),
-          ),
-        ),
+        profile(
+          picture: context.read<UserProvider>().user[0].profile.toBytes(),
+          name:
+              "${context.read<UserProvider>().user[0].firstname} ${context.read<UserProvider>().user[0].lastname}",
+        )
       ],
     );
   }
@@ -96,43 +92,40 @@ class _SideMenuState extends State<SideMenu> {
         context.read<LayoutProvider>().setScreenIndex(index);
       },
       child: AnimatedContainer(
-        alignment: Alignment.center,
-        width: 180,
-        height: context.watch<LayoutProvider>().screenIndex == index ? 180 : 50,
-        padding: const EdgeInsets.all(10),
+        alignment: Alignment.centerLeft,
+        width: 200,
+        height: 40,
+        margin: const EdgeInsets.only(left: 10),
+        padding: const EdgeInsets.only(left: 10),
         curve: Curves.decelerate,
         duration: const Duration(milliseconds: 250),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: const BorderRadius.only(
+            topLeft: Radius.circular(8),
+            bottomLeft: Radius.circular(8),
+          ),
           color: context.watch<LayoutProvider>().screenIndex == index
-              ? Colors.blue
-              : Colors.blueGrey[100],
+              ? Colors.orange[800]
+              : Colors.transparent,
         ),
-        child: Column(
+        child: Row(
           children: [
-            Visibility(
-              visible: context.watch<LayoutProvider>().screenIndex == index,
-              child: Expanded(
-                child: Icon(
-                  icon,
-                  size: 110,
-                  color: context.watch<LayoutProvider>().screenIndex == index
-                      ? Colors.white
-                      : Colors.grey[700],
-                ),
-              ),
+            Icon(
+              icon,
+              color: context.read<LayoutProvider>().screenIndex == index
+                  ? Colors.white
+                  : Colors.grey,
             ),
-            SizedBox(
-              height: 30,
-              child: Center(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: context.watch<LayoutProvider>().screenIndex == index
-                        ? Colors.white
-                        : Colors.grey[700],
-                  ),
+            Container(
+              height: 25,
+              padding: const EdgeInsets.only(left: 3),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: context.read<LayoutProvider>().screenIndex == index
+                      ? Colors.white
+                      : Colors.grey,
                 ),
               ),
             ),
@@ -142,17 +135,50 @@ class _SideMenuState extends State<SideMenu> {
     );
   }
 
-  Widget profile({picture, name}) {
+  Widget profile({Uint8List? picture, String? name}) {
     return Container(
-      width: double.infinity,
-      height: double.infinity,
-      decoration: const BoxDecoration(
-        color: Colors.blueGrey,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(25),
-          topRight: Radius.circular(25),
-          bottomLeft: Radius.circular(60),
-          bottomRight: Radius.circular(60),
+      margin: const EdgeInsets.all(8),
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {
+                logout();
+              },
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: picture == null
+                    ? const Center(
+                        child: Icon(
+                        Icons.account_circle,
+                        color: Colors.grey,
+                        size: 30,
+                      ))
+                    : CircleAvatar(
+                        radius: 100,
+                        backgroundImage: MemoryImage(picture!),
+                        backgroundColor: Colors.white,
+                      ),
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Text(
+              name!,
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
         ),
       ),
     );
@@ -160,9 +186,67 @@ class _SideMenuState extends State<SideMenu> {
 
   logout() {
     context.read<UserProvider>().reset();
-    context.read<StockProvider>().reset();
-    context.read<HistoryProvider>().setHistoryList();
-    context.read<BonProvider>().reset();
+    context.read<ProductProvider>().reset(context: context);
+    context.read<HistoryProvider>().setList();
     context.read<LayoutProvider>().setScreenIndex(0);
+    AppConfig.preferences!.setBool("rememberMe", false);
+  }
+
+  Widget search() {
+    return Container(
+      height: 45,
+      alignment: Alignment.centerLeft,
+      margin: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.grey[800],
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        children: [
+          const Padding(
+            padding: EdgeInsets.only(right: 3.0, left: 5),
+            child: Icon(
+              Icons.search_rounded,
+              size: 23,
+              color: Colors.white,
+            ),
+          ),
+          Expanded(
+            child: TextField(
+              textAlignVertical: TextAlignVertical.center,
+              enabled: context.read<LayoutProvider>().screenIndex == 0,
+              controller: StockToolBar.editingController,
+              style: const TextStyle(fontSize: 20, color: Colors.white),
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                hintText: context.read<LayoutProvider>().screenIndex == 0
+                    ? "Recherche"
+                    : "Non disponible",
+                hintStyle: const TextStyle(fontSize: 16, color: Colors.white),
+              ),
+              onChanged: searchQuery(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  searchQuery() {
+    Timer? timer;
+
+    void debounce(String q) {
+      if (timer != null) {
+        timer!.cancel();
+      }
+      timer = Timer(const Duration(milliseconds: 100), () async {
+        await context.read<ProductProvider>().setList(
+              context: context,
+              filter: StockToolBar.editingController.text,
+            );
+      });
+    }
+
+    return debounce;
   }
 }

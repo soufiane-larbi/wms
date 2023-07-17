@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "PDR" "\0"
+            VALUE "FileDescription", "whm" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "PDR" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2022 Larbi Soufiane. All rights reserved." "\0"
-            VALUE "OriginalFilename", "pdr.exe" "\0"
-            VALUE "ProductName", "PDR" "\0"
+            VALUE "InternalName", "whm" "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2023 com.example. All rights reserved." "\0"
+            VALUE "OriginalFilename", "whm.exe" "\0"
+            VALUE "ProductName", "whm" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

@@ -1,17 +1,16 @@
-import 'dart:convert';
-
+import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:whm/helper/provider/bon_provider.dart';
-import 'package:whm/helper/provider/history_provider.dart';
+import 'package:whm/Formater/product_type.dart';
+import 'package:whm/helper/provider/category_provider.dart';
 import 'package:whm/helper/provider/layout_provider.dart';
-import 'package:whm/helper/provider/user_provider.dart';
-import 'package:whm/layout/add_bon.dart';
-import 'package:whm/layout/edit_pdr.dart';
-import 'package:whm/layout/remove_stock.dart';
+import 'package:whm/helper/provider/notification_provider.dart';
+import 'package:whm/helper/provider/warehouse_provider.dart';
+import 'package:whm/layout/add_category.dart';
+import 'package:whm/layout/add_warehouse.dart';
 import 'package:provider/provider.dart';
-import 'package:whm/helper/provider/stock_provider.dart';
-import '../helper/print.dart';
-import 'add_stock.dart';
+import 'package:whm/helper/provider/product_provider.dart';
+import 'package:whm/layout/remove_product.dart';
+import 'add_product.dart';
 
 class StockToolBar extends StatefulWidget {
   static final TextEditingController editingController =
@@ -30,443 +29,422 @@ class _StockToolBarState extends State<StockToolBar> {
         height: double.maxFinite,
         width: double.maxFinite,
         child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          mainAxisSize: MainAxisSize.max,
           children: [
-            Expanded(
-              child: searchField(),
+            Text(
+              "WHM/${context.watch<LayoutProvider>().screenName}",
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w500,
+              ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Visibility(
-                  visible: 'Admin' == context.watch<UserProvider>().role &&
-                      context.read<LayoutProvider>().screenIndex == 0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) {
-                            return AlertDialog(
-                              content: SizedBox(
-                                width: 50,
-                                height: 30,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () {
-                                        String pdr = context
-                                                .read<StockProvider>()
-                                                .stockList[
-                                            context
-                                                .read<StockProvider>()
-                                                .selected]['id'];
-                                        int quantity = context
-                                                .read<StockProvider>()
-                                                .stockList[
-                                            context
-                                                .read<StockProvider>()
-                                                .selected]['quantity'];
-                                        context
-                                            .read<StockProvider>()
-                                            .updateStockQuantity(
-                                              pdrId: pdr,
-                                              newQuantity: 0,
-                                            );
-                                        context
-                                            .read<HistoryProvider>()
-                                            .addHistory(
-                                              user: context
-                                                  .read<UserProvider>()
-                                                  .user,
-                                              pdr: pdr,
-                                              operation: 'Supprimer',
-                                              newQuantity: quantity,
-                                            );
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text(
-                                        'Supprimer',
-                                        style: TextStyle(
-                                          color: Colors.red,
-                                        ),
-                                      ),
+            const Spacer(),
+            //Delete
+            Visibility(
+              visible: context.read<LayoutProvider>().screenIndex <= 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return AlertDialog(
+                          content: SizedBox(
+                            width: 50,
+                            height: 30,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                TextButton(
+                                  onPressed: () async {
+                                    if (context
+                                            .read<LayoutProvider>()
+                                            .screenIndex ==
+                                        0) {
+                                      await context
+                                          .read<ProductProvider>()
+                                          .delete(
+                                            context: context,
+                                          );
+                                    }
+                                    if (context
+                                            .read<LayoutProvider>()
+                                            .screenIndex ==
+                                        1) {
+                                      await context
+                                          .read<CategoryProvider>()
+                                          .delete(
+                                            context: context,
+                                          );
+                                    }
+                                    if (context
+                                            .read<LayoutProvider>()
+                                            .screenIndex ==
+                                        2) {
+                                      await context
+                                          .read<WarehouseProvider>()
+                                          .delete(
+                                            context: context,
+                                          );
+                                    }
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Supprimer',
+                                    style: TextStyle(
+                                      color: Colors.red,
                                     ),
-                                    TextButton(
-                                      onPressed: () {
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: const Text(
-                                        'Annuler',
-                                        style: TextStyle(
-                                          color: Colors.blue,
-                                        ),
-                                      ),
+                                  ),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: const Text(
+                                    'Annuler',
+                                    style: TextStyle(
+                                      color: Colors.blue,
                                     ),
-                                  ],
+                                  ),
                                 ),
-                              ),
-                            );
-                          },
+                              ],
+                            ),
+                          ),
                         );
                       },
-                      child: const Icon(
-                        Icons.delete_rounded,
-                        color: Colors.red,
-                        size: 40,
-                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.red,
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.delete_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Supprimer",
+                          style: TextStyle(color: Colors.white),
+                        )
+                      ],
                     ),
                   ),
                 ),
-                Visibility(
-                  visible: context.read<LayoutProvider>().screenIndex == 0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) {
-                            return AlertDialog(
-                              title: Text(
-                                  "Modifier: ${context.read<StockProvider>().stockList[context.read<StockProvider>().selected]['id']}"),
-                              content: SizedBox(
-                                width: 410,
-                                height: 280,
-                                child: EditPDR(
-                                  pdr: context.read<StockProvider>().stockList[
-                                      context.read<StockProvider>().selected],
-                                ),
+              ),
+            ),
+            //Edit
+            Visibility(
+              visible: context.read<LayoutProvider>().screenIndex <= 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: InkWell(
+                  onTap: () {
+                    if (context.read<LayoutProvider>().screenIndex == 0) {
+                      ProductType product =
+                          context.read<ProductProvider>().productList[
+                              context.read<ProductProvider>().selected];
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: Text(
+                                "Modifier: ${context.read<ProductProvider>().productList[context.read<ProductProvider>().selected].name}"),
+                            content: SizedBox(
+                              width: 410,
+                              height: 280,
+                              child: AddStock(
+                                productOld: product,
                               ),
-                            );
-                          },
-                        );
-                      },
-                      child: const Icon(
-                        Icons.edit,
-                        color: Colors.blue,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: context.read<LayoutProvider>().screenIndex == 0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) {
-                            return const AlertDialog(
-                              title: Text("Ajouter PDR"),
-                              content: SizedBox(
-                                width: 410,
-                                height: 280,
-                                child: AddStock(),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: const Icon(
-                        Icons.move_to_inbox,
-                        color: Colors.green,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: context.read<LayoutProvider>().screenIndex == 0,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: InkWell(
-                      onTap: () {
-                        showDialog(
-                          context: context,
-                          builder: (_) {
-                            return AlertDialog(
-                              title: const Text("Bon de Commande"),
-                              content: SizedBox(
-                                width: 410,
-                                height: 280,
-                                child: RemoveStock(
-                                  pdrID:
-                                      context.read<StockProvider>().stockList[
-                                          context
-                                              .read<StockProvider>()
-                                              .selected]['id'],
-                                  pdrPrice:
-                                      context.read<StockProvider>().stockList[
-                                          context
-                                              .read<StockProvider>()
-                                              .selected]['price'],
-                                  beneficiary:
-                                      context.read<BonProvider>().beneficiary,
-                                  ticket: context.read<BonProvider>().ticket,
-                                  quantity:
-                                      context.read<StockProvider>().stockList[
-                                          context
-                                              .read<StockProvider>()
-                                              .selected]['quantity'],
-                                ),
-                              ),
-                            );
-                          },
-                        );
-                      },
-                      child: const Icon(
-                        Icons.outbox_rounded,
-                        color: Colors.orange,
-                        size: 40,
-                      ),
-                    ),
-                  ),
-                ),
-                Visibility(
-                  visible: context.read<LayoutProvider>().screenIndex == 0 ||
-                      context.read<LayoutProvider>().screenIndex == 2,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: InkWell(
-                      onTap: () async {
-                        try {
-                          if (context.read<LayoutProvider>().screenIndex == 0) {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (_) {
-                                return const BonCommande();
-                              },
-                            );
-                            return;
-                          }
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                "Chargement...",
-                                textAlign: TextAlign.center,
-                              ),
-                              backgroundColor: Colors.grey,
                             ),
                           );
+                        },
+                      );
+                    }
+                    if (context.read<LayoutProvider>().screenIndex == 1) {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: Text(
+                                "Modifier: ${context.read<CategoryProvider>().categoryList[context.read<CategoryProvider>().selected].name}"),
+                            content: SizedBox(
+                              width: 410,
+                              height: 140,
+                              child: AddCategory(
+                                categoryOld: context
+                                        .read<CategoryProvider>()
+                                        .categoryList[
+                                    context.read<CategoryProvider>().selected],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    }
 
-                          List<dynamic> bon = jsonDecode(context
-                                  .read<BonProvider>()
-                                  .bonList[context.read<BonProvider>().selected]
-                              ['history']);
-                          await printDoc(
-                              context: context,
-                              bon: bon,
-                              date: context
-                                  .read<BonProvider>()
-                                  .bonList[context.read<BonProvider>().selected]
-                                      ['date']
-                                  .toString());
-                        } catch (e) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                "Error: $e",
-                                textAlign: TextAlign.center,
+                    if (context.read<LayoutProvider>().screenIndex == 2) {
+                      showDialog(
+                        context: context,
+                        builder: (_) {
+                          return AlertDialog(
+                            title: Text(
+                                "Modifier: ${context.read<WarehouseProvider>().wahrehouseList[context.read<WarehouseProvider>().selected].name}"),
+                            content: SizedBox(
+                              width: 410,
+                              height: 180,
+                              child: AddWarehouse(
+                                warehouse: context
+                                        .read<WarehouseProvider>()
+                                        .wahrehouseList[
+                                    context.read<WarehouseProvider>().selected],
                               ),
-                              backgroundColor: Colors.red,
                             ),
                           );
-                        }
+                        },
+                      );
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.blue,
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.edit,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Modifier",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            //Add
+            Visibility(
+              visible: context.read<LayoutProvider>().screenIndex <= 2,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: InkWell(
+                  onTap: () {
+                    String title =
+                        context.read<LayoutProvider>().screenIndex == 0
+                            ? "Produit"
+                            : context.read<LayoutProvider>().screenIndex == 1
+                                ? "Categorie"
+                                : "Depot";
+                    Widget addItem =
+                        context.read<LayoutProvider>().screenIndex == 0
+                            ? AddStock()
+                            : context.read<LayoutProvider>().screenIndex == 1
+                                ? AddCategory()
+                                : AddWarehouse();
+                    double height =
+                        context.read<LayoutProvider>().screenIndex == 0
+                            ? 280
+                            : context.read<LayoutProvider>().screenIndex == 1
+                                ? 135
+                                : 180;
+
+                    if (context.read<LayoutProvider>().screenIndex == 0 &&
+                        (context
+                                .read<WarehouseProvider>()
+                                .wahrehouseList
+                                .isEmpty ||
+                            context
+                                .read<CategoryProvider>()
+                                .categoryList
+                                .isEmpty)) {
+                      context.read<NotificationProvider>().showNotification(
+                            type: 1,
+                            message:
+                                "Vous avez besoin d'au moins une catégorie et un entrepôt pour ajouter un produit !",
+                          );
+                      return;
+                    }
+                    showDialog(
+                      context: context,
+                      builder: (_) {
+                        return AlertDialog(
+                          title: Text("Ajouter $title"),
+                          content: SizedBox(
+                            width: 410,
+                            height: height,
+                            child: addItem,
+                          ),
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.green,
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.add,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Ajouter",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            //Remove
+            Visibility(
+              visible: context.read<LayoutProvider>().screenIndex == 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: InkWell(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: const Text("Remove"),
+                            content: Container(
+                              height: 100,
+                              width: 370,
+                              child: RemoveProduct(),
+                            ),
+                          );
+                        });
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    height: 40,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.orange,
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(
+                          Icons.outbox_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Text(
+                          "Retirer",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            //Print
+            Visibility(
+              visible: context.read<LayoutProvider>().screenIndex == 0,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 5),
+                child: Stack(
+                  alignment: Alignment.centerRight,
+                  children: [
+                    InkWell(
+                      onTap: () {
+                        context.read<LayoutProvider>().isPrintDisplayed
+                            ? context.read<LayoutProvider>().hidePrint()
+                            : context.read<LayoutProvider>().showPrint();
                       },
                       child: SizedBox(
                         height: 40,
-                        width: 40,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            Icon(
-                              Icons.print_rounded,
-                              color: Colors.grey[600],
-                              size: 40,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 15),
+                          height: 40,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            color: Colors.grey,
+                          ),
+                          child: Row(
+                            children: const [
+                              Icon(
+                                Icons.print_rounded,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                              SizedBox(
+                                width: 5,
+                              ),
+                              Text(
+                                "Imprimer",
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Visibility(
+                      visible: context.read<LayoutProvider>().screenIndex == 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 3.0, left: 3.0),
+                        child: Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            alignment: Alignment.center,
+                            height: 16,
+                            width: 16,
+                            decoration: BoxDecoration(
+                              color: Colors.red[400],
+                              borderRadius: BorderRadius.circular(100),
                             ),
-                            Visibility(
-                              visible:
-                                  context.read<LayoutProvider>().screenIndex ==
-                                      0,
-                              child: Align(
-                                alignment: Alignment.bottomRight,
-                                child: Container(
-                                  alignment: Alignment.center,
-                                  height: 16,
-                                  width: 16,
-                                  decoration: BoxDecoration(
-                                    color: Colors.red[400],
-                                    borderRadius: BorderRadius.circular(100),
-                                  ),
-                                  child: Text(
-                                    context
-                                        .watch<BonProvider>()
-                                        .temBonList
-                                        .length
-                                        .toString(),
-                                    textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ),
+                            child: Text(
+                              '${context.watch<ProductProvider>().removeList.length}',
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
                               ),
-                            )
-                          ],
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ),
+                    )
+                  ],
                 ),
-                Visibility(
-                  visible: context.read<LayoutProvider>().screenIndex == 1,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 5),
-                    child: Container(
-                      height: 40,
-                      width: 40,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(100),
-                        color: Colors.green,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          int index =
-                              context.read<StockProvider>().returnSelected;
-                          int returnId = context
-                              .read<StockProvider>()
-                              .returnList[index]['id'];
-                          String pdr = context
-                              .read<StockProvider>()
-                              .returnList[index]['pdr'];
-                          if (context.read<StockProvider>().returnList[index]
-                                  ['status'] !=
-                              0) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  "$pdr a été déja retourné",
-                                  textAlign: TextAlign.center,
-                                ),
-                                backgroundColor: Colors.orange,
-                              ),
-                            );
-                            return;
-                          }
-                          showDialog(
-                            context: context,
-                            builder: (_) {
-                              return AlertDialog(
-                                title: Center(
-                                  child: Text(
-                                      "${context.read<StockProvider>().returnList[context.read<StockProvider>().returnSelected]['pdr']}"),
-                                ),
-                                content: SizedBox(
-                                  width: 50,
-                                  height: 30,
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      TextButton(
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text(
-                                          'Annuler',
-                                          style: TextStyle(
-                                            color: Colors.red,
-                                          ),
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () async {
-                                          context
-                                              .read<StockProvider>()
-                                              .updateReturnStatus(
-                                                returnId: returnId,
-                                                status: 1,
-                                              );
-                                          context
-                                              .read<HistoryProvider>()
-                                              .addHistory(
-                                                user: context
-                                                    .read<UserProvider>()
-                                                    .user,
-                                                pdr: pdr,
-                                                operation: 'Retourné',
-                                                ticket: context
-                                                        .read<StockProvider>()
-                                                        .returnList[
-                                                    context
-                                                        .read<StockProvider>()
-                                                        .returnSelected]['ticket'],
-                                                beneficiary: context
-                                                            .read<StockProvider>()
-                                                            .returnList[
-                                                        context
-                                                            .read<StockProvider>()
-                                                            .returnSelected]
-                                                    ['beneficiary'],
-                                                newQuantity: context
-                                                            .read<StockProvider>()
-                                                            .returnList[
-                                                        context
-                                                            .read<StockProvider>()
-                                                            .returnSelected]
-                                                    ['quantity'],
-                                              );
-                                          await context
-                                              .read<StockProvider>()
-                                              .setStats();
-                                          context
-                                              .read<StockProvider>()
-                                              .changeReturnSelected(0);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              content: Text(
-                                                "$pdr a été retourné",
-                                                textAlign: TextAlign.center,
-                                              ),
-                                              backgroundColor: Colors.green,
-                                            ),
-                                          );
-                                          Navigator.of(context).pop();
-                                        },
-                                        child: const Text(
-                                          'Confirmer Le Retour',
-                                          style: TextStyle(
-                                            color: Colors.blue,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        child: const Icon(
-                          Icons.arrow_circle_down_rounded,
-                          color: Colors.white,
-                          size: 40,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
+              ),
             ),
           ],
         ),
@@ -482,15 +460,21 @@ class _StockToolBarState extends State<StockToolBar> {
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 5),
             child: TextField(
+              enabled: context.read<LayoutProvider>().screenIndex == 0,
               controller: StockToolBar.editingController,
               style: const TextStyle(fontSize: 20),
               decoration: InputDecoration(
                 border: InputBorder.none,
-                hintText: searchHint(),
+                hintText: context.read<LayoutProvider>().screenIndex == 0
+                    ? "Recherche par nom, code-barres, catégorie et entrepôt"
+                    : "Recherche non disponible",
                 hintStyle: const TextStyle(fontSize: 20),
               ),
               onChanged: (_) {
-                search();
+                context.read<ProductProvider>().setList(
+                      context: context,
+                      filter: StockToolBar.editingController.text,
+                    );
               },
             ),
           ),
@@ -508,63 +492,48 @@ class _StockToolBarState extends State<StockToolBar> {
     );
   }
 
-  search() {
-    if (context.read<LayoutProvider>().screenIndex == 0) {
-      context.read<StockProvider>().setStockList(
-        filter: '''
-                    WHERE (id LIKE '%${StockToolBar.editingController.text}%'
-                    OR name LIKE '%${StockToolBar.editingController.text}%'
-                    OR product LIKE '%${StockToolBar.editingController.text}%') 
-                  ''',
-      );
-      return;
-    }
-    if (context.read<LayoutProvider>().screenIndex == 1) {
-      context.read<StockProvider>().setReturnList(
-        filter: '''
-                    WHERE (pdr.id LIKE '%${StockToolBar.editingController.text}%'
-                    OR pdr.name LIKE '%${StockToolBar.editingController.text}%'
-                    OR pdr.product LIKE '%${StockToolBar.editingController.text}%'
-                    OR returnPdr.ticket LIKE '%${StockToolBar.editingController.text}%'
-                    OR returnPdr.beneficiary LIKE '%${StockToolBar.editingController.text}%'
-                    ) 
-                  ''',
-      );
-      return;
-    }
-    if (context.read<LayoutProvider>().screenIndex == 2) {
-      context.read<BonProvider>().setBonList(
-        filter: '''
-                    WHERE history like '%${StockToolBar.editingController.text}%'
-                  ''',
-      );
-      return;
-    }
-    if (context.read<LayoutProvider>().screenIndex == 3) {
-      context.read<HistoryProvider>().setHistoryList(
-        filter: '''
-                    WHERE pdr.id LIKE '%${StockToolBar.editingController.text}%'
-                    OR history.ticket LIKE '%${StockToolBar.editingController.text}%'
-                    OR history.beneficiary LIKE '%${StockToolBar.editingController.text}%'
-                  ''',
-      );
-      return;
-    }
-  }
-
-  String searchHint() {
-    if (context.read<LayoutProvider>().screenIndex == 0) {
-      return 'Code Article, Désignation et Produit';
-    }
-    if (context.read<LayoutProvider>().screenIndex == 1) {
-      return 'Code Article, Désignation, Produit, Ticket et Bénéficiaire';
-    }
-    if (context.read<LayoutProvider>().screenIndex == 2) {
-      return 'Code Article, Ticket et Bénéficiaire';
-    }
-    if (context.read<LayoutProvider>().screenIndex == 3) {
-      return 'Code Article, Ticket et Bénéficiaire';
-    }
-    return 'Chercher';
+  Widget profile({Uint8List? picture, String? name}) {
+    return Container(
+      margin: const EdgeInsets.all(8),
+      height: 40,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 6),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            InkWell(
+              onTap: () {},
+              child: Container(
+                height: 30,
+                width: 30,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                ),
+                child: picture != null
+                    ? Center(
+                        child: Text(
+                          name!.substring(0, 1).toUpperCase(),
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      )
+                    : CircleAvatar(
+                        radius: 100,
+                        backgroundImage: MemoryImage(picture!),
+                        backgroundColor: Colors.white,
+                      ),
+              ),
+            ),
+            const SizedBox(
+              width: 5,
+            ),
+            Text(name!),
+          ],
+        ),
+      ),
+    );
   }
 }

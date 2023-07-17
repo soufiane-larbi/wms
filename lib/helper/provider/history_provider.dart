@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mysql1/mysql1.dart';
+import 'package:whm/Formater/history_type.dart';
+import 'package:whm/Formater/product_type.dart';
 import 'package:whm/helper/config.dart';
 
 class HistoryProvider with ChangeNotifier {
-  final _historyList = [];
+  final List<HistoryType> _historyList = [];
   int _selected = 0;
 
   int get selected => _selected;
@@ -15,52 +19,41 @@ class HistoryProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> setHistoryList({filter = ''}) async {
+  Future<void> setList({filter = ''}) async {
     _historyList.clear();
     var conn = await MySqlConnection.connect(AppConfig().DB_CONNECTION);
-    _historyList.addAll(await conn.query('''SELECT 
-        pdr.id, pdr.name, history.user, history.ticket, history.beneficiary, 
-        history.price, history.operation, history.previous_quantity,
-        history.new_quantity, history.date 
-        FROM history 
-        INNER JOIN pdr 
-        ON pdr.id = history.pdr
-        $filter ORDER BY history.date DESC;'''));
+    var result = await conn.query('''
+      SELECT * from history ORDER BY date DESC;
+    ''');
+
+    for (var row in result) {
+      _historyList.add(HistoryType(
+        id: row['id'],
+        user: row['user'],
+        date: row['date'],
+        productNew: ProductType.fromJson(jsonDecode(row['product_new'])),
+        productOld: jsonDecode(row['product_old']).isEmpty
+            ? ProductType()
+            : ProductType.fromJson(jsonDecode(row['product_old'])),
+      ));
+    }
     notifyListeners();
     conn.close();
   }
 
-  Future<bool> addHistory({
-    required String? user,
-    String ticket = '-',
-    String beneficiary = '-',
-    required String? pdr,
-    required String? operation,
-    int previousQuantity = 0,
-    required int? newQuantity,
-    double? price = 0,
+  Future<bool> add({
+    required String user,
+    required ProductType productNew,
+    ProductType? productOld,
   }) async {
     var conn = await MySqlConnection.connect(AppConfig().DB_CONNECTION);
-    await conn.query(
-      '''INSERT INTO history(
-          user, ticket, beneficiary, pdr , price, operation,
-          previous_quantity, new_quantity, date
-        )
-        VALUES('$user', '$ticket', '$beneficiary', '$pdr', $price, '$operation',
-          $previousQuantity, $newQuantity,  NOW()
-        );
-        ''',
-    );
-    setHistoryList();
+    var pOld = productOld ?? {};
+    String q = '''INSERT INTO history(user, product_new, product_old, date)
+        VALUES("$user", '${jsonEncode(productNew)}', '${jsonEncode(pOld)}', NOW());
+      ''';
+    await conn.query(q);
+    setList();
     notifyListeners();
     return true;
-  }
-
-  Future<void> query({query = ''}) async {
-    var conn = await MySqlConnection.connect(AppConfig().DB_CONNECTION);
-    await conn.query(query);
-    setHistoryList();
-    notifyListeners();
-    conn.close();
   }
 }
